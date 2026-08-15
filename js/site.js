@@ -47,19 +47,36 @@
     slateTc.textContent = '00:00:04:00';
   }
 
-  /* ---------- hero entrance ---------- */
+  /* ---------- hero entrance: CA char slide-in (opacity 0, x 24%, scale 1.1, stagger .05) ---------- */
   var heroDone = false;
+  var heroChars = [];
+  document.querySelectorAll('.hero-h1 .line').forEach(function (line) {
+    var text = line.textContent;
+    line.textContent = '';
+    text.split('').forEach(function (chr) {
+      var s = document.createElement('span');
+      s.style.display = 'inline-block';
+      s.style.whiteSpace = 'pre';
+      s.textContent = chr;
+      line.appendChild(s);
+      heroChars.push(s);
+    });
+  });
+  if (hasGsap && !reduceMotion) {
+    gsap.set('.hero-h1 .line', { y: 0 });
+    gsap.set(heroChars, { opacity: 0, x: '24%', scale: 1.1 });
+  }
   function heroIn() {
     if (heroDone) return;
     heroDone = true;
     if (!hasGsap || reduceMotion) return;
-    gsap.to('.hero-h1 .line', { y: 0, duration: .9, stagger: .12, ease: 'expo.out', delay: .15 });
-    gsap.to(['.hero-sub', '.deck'], { opacity: 1, y: 0, duration: .7, stagger: .12, ease: 'power2.out', delay: .5 });
+    gsap.to(heroChars, { opacity: 1, x: '0%', scale: 1, duration: .35, stagger: .045, ease: 'power1.out', delay: .1 });
+    gsap.to(['.hero-sub', '.deck'], { opacity: 1, y: 0, duration: .7, stagger: .12, ease: 'power2.out', delay: .55 });
   }
 
-  /* ---------- lenis ---------- */
+  /* ---------- lenis (CA: 2.4 / mouseMultiplier .5) ---------- */
   if (hasGsap && !reduceMotion && typeof Lenis !== 'undefined') {
-    var lenis = new Lenis({ duration: 1.6, easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); } });
+    var lenis = new Lenis({ duration: 2.4, mouseMultiplier: 0.5, easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); } });
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add(function (time) { lenis.raf(time * 1000); });
     gsap.ticker.lagSmoothing(0);
@@ -115,10 +132,16 @@
       });
   });
 
-  /* ---------- case rail marquee + lazy case videos ---------- */
+  /* ---------- partner logo marquee (CA scroll-line) ---------- */
   if (hasGsap && !reduceMotion) {
-    var track = document.querySelector('.rail-track');
-    if (track) gsap.to(track, { yPercent: -50, duration: 26, ease: 'none', repeat: -1 });
+    var pline = document.getElementById('partnerLine');
+    if (pline) {
+      var pset = pline.querySelector('.partner-set');
+      gsap.to(pline, {
+        x: function () { return -pset.offsetWidth; },
+        duration: 36, ease: 'none', repeat: -1
+      });
+    }
   }
   document.querySelectorAll('.case-video').forEach(function (v) {
     var src = v.querySelector('source[data-src]');
@@ -242,22 +265,43 @@
       }
       measureKvik();
       window.addEventListener('resize', measureKvik);
+      /* chapter choreography: canvas rides the whole scroll; word arrives, morphs, hands
+         back to the film so the drone landing on the RVK mark plays clean at the end */
+      gsap.set('.mynd-wrap', { opacity: 0, y: 40 });
       gsap.timeline({
         scrollTrigger: { trigger: '.film', start: 'top top', end: 'bottom bottom', scrub: true }
       })
-        .to('.fn-1', { opacity: 1, y: 0, duration: .08 }, .04)
-        .to('.fn-1', { opacity: 0, duration: .08 }, .3)
+        .to('.fn-1', { opacity: 1, duration: .05 }, .03)
+        .to('.mynd-wrap', { opacity: 1, y: 0, duration: .08 }, .1)
+        .to('.fn-1', { opacity: 0, duration: .05 }, .26)
         .to(kvik, {
-          width: function () { return kvikW; }, opacity: 1, duration: .22, ease: 'none'
+          width: function () { return kvikW; }, opacity: 1, duration: .18, ease: 'none'
         }, .3)
-        .to('.mynd-gloss', { opacity: 1, duration: .1 }, .52)
-        .to('.fn-2', { opacity: 1, duration: .08 }, .62)
-        .to('.fn-2', { opacity: 0, duration: .08 }, .9);
+        .to('.mynd-gloss', { opacity: 1, duration: .07 }, .48)
+        .to('.fn-2', { opacity: 1, duration: .05 }, .56)
+        .to('.film-keep', { opacity: 1, duration: .05 }, .62)
+        .to('.fn-2', { opacity: 0, duration: .05 }, .72)
+        .to('.mynd-gloss', { opacity: 0, duration: .06 }, .76)
+        .to('.mynd-wrap', { opacity: 0, y: -40, duration: .08 }, .8)
+        .to('.film-keep', { opacity: 0, duration: .05 }, .9);
     } else {
       /* static: last frame (the mark) */
       var img = new Image();
       img.src = frameURL(TOTAL - 1);
       img.onload = function () { frames[TOTAL - 1] = img; current = TOTAL - 1; drawFrame(current); };
+    }
+  }
+
+  /* ---------- argument: word-by-word scrub reveal (CA PERFECTION paragraph device) ---------- */
+  var argP = document.getElementById('argScrub');
+  if (argP) {
+    var words = argP.textContent.replace(/\s+/g, ' ').trim().split(' ');
+    argP.innerHTML = words.map(function (w) { return '<span class="w">' + w + '</span>'; }).join(' ');
+    if (hasGsap && !reduceMotion) {
+      gsap.to(argP.querySelectorAll('.w'), {
+        opacity: 1, stagger: .6, ease: 'none',
+        scrollTrigger: { trigger: argP, start: 'top 78%', end: 'bottom 45%', scrub: true }
+      });
     }
   }
 

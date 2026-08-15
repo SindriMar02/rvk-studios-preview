@@ -53,13 +53,19 @@
   document.querySelectorAll('.hero-h1 .line').forEach(function (line) {
     var text = line.textContent;
     line.textContent = '';
-    text.split('').forEach(function (chr) {
-      var s = document.createElement('span');
-      s.style.display = 'inline-block';
-      s.style.whiteSpace = 'pre';
-      s.textContent = chr;
-      line.appendChild(s);
-      heroChars.push(s);
+    text.split(/(\s+)/).forEach(function (token) {
+      if (!token) return;
+      if (/^\s+$/.test(token)) { line.appendChild(document.createTextNode(' ')); return; }
+      var w = document.createElement('span');
+      w.className = 'wd';
+      token.split('').forEach(function (chr) {
+        var s = document.createElement('span');
+        s.style.display = 'inline-block';
+        s.textContent = chr;
+        w.appendChild(s);
+        heroChars.push(s);
+      });
+      line.appendChild(w);
     });
   });
   if (hasGsap && !reduceMotion) {
@@ -93,10 +99,10 @@
     gsap.timeline({
       scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
     })
-      .to('#heroDim', { opacity: .62, ease: 'none' }, 0)
-      .to('.hero-video', { scale: 1.12, ease: 'none' }, 0)
-      .to('.hero-copy', { y: -60, opacity: .35, ease: 'none' }, 0)
-      .to('.deck', { opacity: 0, ease: 'none' }, .55);
+      .to('#heroDim', { opacity: .72, ease: 'none' }, 0)
+      .to('.hero-video', { scale: 1.14, ease: 'none' }, 0)
+      .to('.hero-copy', { y: -90, opacity: 0, ease: 'none' }, 0)
+      .to('.deck', { opacity: 0, ease: 'none' }, .35);
   }
 
   /* ---------- broadcast deck: timecode from the reel ---------- */
@@ -120,16 +126,23 @@
     });
   }
 
-  /* ---------- char blur reveals ---------- */
+  /* ---------- char blur reveals (words stay unbreakable: per-char spans would
+     otherwise let a line break land mid-word) ---------- */
   document.querySelectorAll('[data-split]').forEach(function (el) {
     var frag = document.createDocumentFragment();
     el.childNodes.forEach(function (node) {
       if (node.nodeType === 3) {
-        node.textContent.split('').forEach(function (chr) {
-          if (chr === ' ') { frag.appendChild(document.createTextNode(' ')); return; }
-          var s = document.createElement('span');
-          s.className = 'ch'; s.textContent = chr;
-          frag.appendChild(s);
+        node.textContent.split(/(\s+)/).forEach(function (token) {
+          if (!token) return;
+          if (/^\s+$/.test(token)) { frag.appendChild(document.createTextNode(' ')); return; }
+          var w = document.createElement('span');
+          w.className = 'wd';
+          token.split('').forEach(function (chr) {
+            var s = document.createElement('span');
+            s.className = 'ch'; s.textContent = chr;
+            w.appendChild(s);
+          });
+          frag.appendChild(w);
         });
       } else { frag.appendChild(node.cloneNode(true)); }
     });
@@ -291,7 +304,10 @@
       var kvikW = 0;
       function measureKvik() {
         kvikW = kvik.getBoundingClientRect().width;
-        gsap.set(myndEl, { x: kvikW / 2 });
+        /* pre-shift keeps "mynd." optically centred before "kvik" arrives, but never
+           far enough to push the word off a narrow screen */
+        var room = Math.max(0, (window.innerWidth - myndEl.scrollWidth) / 2);
+        gsap.set(myndEl, { x: Math.min(kvikW / 2, room) });
       }
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(measureKvik);
       measureKvik();

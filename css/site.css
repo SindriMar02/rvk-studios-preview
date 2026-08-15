@@ -114,22 +114,30 @@ html.no-motion .rec-dot{animation:none}
 .deck-thumb{position:absolute;bottom:0;left:0;width:2px;height:100%;background:var(--ice)}
 .deck-fps{color:var(--mut)}
 
-/* ---------- sections after the hero cover the sticky stage ---------- */
-.manifesto,.work,.offer,.numbers,.partners,.slate-sec,.argument,.cta,.footer{
+/* ---------- stacking: the manifesto is TRANSPARENT so its type flows over the
+   still-playing hero reel (CA behaviour). Everything after it is opaque, which is
+   what finally retires the sticky stage. ---------- */
+.manifesto{position:relative;z-index:1;background:transparent}
+.work,.offer,.numbers,.partners,.slate-sec,.argument,.cta,.footer{
   position:relative;z-index:1;background:var(--bg);
 }
 .film{position:relative;z-index:1}
 
 /* ---------- manifesto ---------- */
 .manifesto{
-  position:relative;padding:clamp(7rem,14vh,11rem) clamp(1.2rem,3vw,2.6rem);
+  padding:clamp(7rem,14vh,11rem) clamp(1.2rem,3vw,2.6rem) clamp(9rem,18vh,14rem);
   display:grid;grid-template-columns:1fr minmax(16rem,24rem);grid-template-rows:auto auto auto;
   gap:2.2rem 4rem;overflow:hidden;
 }
+/* the section closes to black as it rises, so the reel hands off cleanly */
+.mani-bg{
+  position:absolute;inset:0;z-index:-2;pointer-events:none;
+  background:linear-gradient(180deg,rgba(7,9,11,0) 0%,rgba(7,9,11,.72) 26%,var(--bg) 46%,var(--bg) 100%);
+}
 .mani-still{
-  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.34;
-  -webkit-mask-image:linear-gradient(180deg,transparent,#000 22%,#000 78%,transparent);
-  mask-image:linear-gradient(180deg,transparent,#000 22%,#000 78%,transparent);
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.3;z-index:-1;
+  -webkit-mask-image:linear-gradient(180deg,transparent 34%,#000 56%,#000 82%,transparent 100%);
+  mask-image:linear-gradient(180deg,transparent 34%,#000 56%,#000 82%,transparent 100%);
 }
 .mani-top{grid-column:1/-1;font-size:clamp(3rem,13vw,12.4rem);line-height:.82;position:relative}
 .mani-side{position:relative;grid-column:2;justify-self:end;text-align:right}
@@ -335,8 +343,9 @@ html.no-motion .film-keep{opacity:1}
 .mail-tip.show{opacity:1}
 .foot-legal{grid-column:1/-1;margin-top:2.4rem;padding-top:1.6rem;border-top:1px dashed var(--line);color:var(--mut);font-size:.78rem;max-width:56rem}
 
-/* ---------- split chars ---------- */
+/* ---------- split chars (word wrappers keep line breaks between words) ---------- */
 [data-split] .ch{display:inline-block;will-change:filter,opacity}
+.wd{display:inline-block;white-space:nowrap}
 
 /* ---------- mobile ---------- */
 @media (max-width:860px){

@@ -17,9 +17,19 @@
 
 <!-- Slate loader -->
 <div class="slate" id="slate" aria-hidden="true">
-  <div class="slate-mark">RVK STUDIOS</div>
-  <div class="slate-tc" id="slateTc">00:00:00:00</div>
-  <div class="slate-sub">[ GUFUNES, REYKJAVÍK ]</div>
+  <video class="slate-film" id="slateFilm" autoplay muted playsinline preload="auto" poster="assets/loader-poster.jpg">
+    <source src="assets/loader-sting.mp4" type="video/mp4">
+  </video>
+  <div class="slate-vig"></div>
+  <div class="slate-inner">
+    <div class="slate-meta">
+      <span class="slate-tc" id="slateTc">00:00:00:00</span>
+      <span class="slate-sub">GUFUNES &middot; REYKJAVÍK</span>
+    </div>
+    <div class="slate-rule"><i class="slate-fill" id="slateFill"></i></div>
+  </div>
+  <div class="gate gate-top" id="gateTop"></div>
+  <div class="gate gate-bot" id="gateBot"></div>
 </div>
 
 <header class="nav" id="top">
@@ -288,30 +298,150 @@
     <p class="breath-cue">CUT&nbsp;TO:</p>
   </section>
 
-  <!-- 7 · The reel: INT / EXT, cut by the scroll -->
-  <section class="reel" id="reel" aria-label="Interiors and exteriors, cut against each other">
-    <div class="reel-stage">
-      <div class="cut-layers" id="cutLayers">
-      <figure class="cut" data-slug="INT. STAGE 1 &middot; GUFUNES"><img src="assets/cut/cut-1.webp" alt="Empty sound stage at RVK Studios, Gufunes"></figure>
-      <figure class="cut" data-slug="EXT. ICE CAVE &middot; DAY"><img src="assets/cut/cut-2.webp" alt="Ice cave interior lit from the mouth"></figure>
-      <figure class="cut" data-slug="INT. STAGE &middot; SET BUILD"><img src="assets/cut/cut-3.webp" alt="Standing set under lighting rigs on a sound stage" loading="lazy"></figure>
-      <figure class="cut" data-slug="EXT. BLACK SAND &middot; DUSK"><img src="assets/cut/cut-4.webp" alt="Black sand beach with sea stacks at dusk" loading="lazy"></figure>
-      <figure class="cut" data-slug="INT. STAGE &middot; SHOOT DAY"><img src="assets/cut/cut-5.webp" alt="Crew shooting against a mountain backdrop on stage" loading="lazy"></figure>
-      <figure class="cut" data-slug="EXT. MOUNTAIN COAST &middot; SUNSET"><img src="assets/cut/cut-6.webp" alt="Coastal mountain range mirrored in still water" loading="lazy"></figure>
-      <figure class="cut" data-slug="INT. THE VILLAGE &middot; GUFUNES"><img src="assets/cut/cut-7.webp" alt="Atrium of the film village at Gufunes" loading="lazy"></figure>
-      <figure class="cut" data-slug="EXT. GLACIAL RIVER &middot; AERIAL"><img src="assets/cut/cut-8.webp" alt="Braided glacial river from the air" loading="lazy"></figure>
-      </div>
-      <div class="cut-seam" id="cutSeam" aria-hidden="true"><span class="seam-tag">CUT</span></div>
-      <div class="scope-bar sb-top" aria-hidden="true"></div>
-      <div class="scope-bar sb-bot" aria-hidden="true"></div>
-      <p class="slug" id="slugNow">INT. STAGE 1 &middot; GUFUNES</p>
-      <p class="cut-count" id="cutCount">01 / 08</p>
-      <div class="reel-payoff" id="reelPayoff">
-        <h2 class="display">INT. AND EXT.<br>WITHOUT LEAVING THE COUNTRY.</h2>
-        <p class="payoff-sub">Three stages in Gufunes. Everything else is outside the door.</p>
-      </div>
+  <!-- 7 · The rail: travel INT to EXT without leaving the country -->
+  <div class="rail_outer" id="reel">
+    <div class="rail_final-bg" aria-hidden="true">
+      <img class="img-fill" src="assets/cut/cut-6.webp" alt="" loading="lazy">
+      <div class="rail_final-bg_scrim"></div>
     </div>
-  </section>
+    <section class="rail" id="rail" aria-label="Stages and locations, travelled end to end">
+      <div class="rail_wrapper">
+        <div class="rail_backdrops" aria-hidden="true">
+          <div class="rail_backdrop rail_backdrop--behind" id="railBehind">
+            <img class="img-fill" src="assets/cut/cut-5.webp" alt="" loading="lazy">
+          </div>
+          <div class="rail_backdrop rail_backdrop--clipped" id="railClipped">
+            <img class="img-fill" src="assets/cut/cut-8.webp" alt="" loading="lazy">
+            <svg class="rail_curtain" id="railCurtain" width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 100" aria-hidden="true">
+              <defs>
+                <clipPath id="curtainClip" clipPathUnits="objectBoundingBox">
+                  <rect x="0" y="0" width="0.3334" height="1"></rect>
+                  <rect x="0.3333" y="0" width="0.3334" height="1"></rect>
+                  <rect x="0.6666" y="0" width="0.3334" height="1"></rect>
+                </clipPath>
+              </defs>
+            </svg>
+          </div>
+          <div class="rail_overlay" id="railOverlay" aria-hidden="true"></div>
+        </div>
+        <div class="rail_container" id="railContainer">
+
+          <div class="rail_panel rail_panel--title">
+            <div class="rail_title-wrap">
+              <h2 class="rail_title" id="railTitle">INT. AND EXT.</h2>
+              <p class="rail_kicker">Without leaving the country</p>
+            </div>
+          </div>
+
+          <div class="rail_panel">
+            <figure class="cut-card">
+              <img class="cut-card_image" src="assets/cut/cut-1.webp" alt="Empty sound stage at RVK Studios, Gufunes" loading="lazy">
+              <div class="cut-card_shade" aria-hidden="true"></div>
+              <figcaption class="cut-card_content">
+                <p class="cut-card_slug">INT. STAGE 1 &middot; GUFUNES</p>
+                <p class="cut-card_line">Six thousand five hundred square metres of floor across three stages.</p>
+                <p class="cut-card_num">01 / 08</p>
+              </figcaption>
+            </figure>
+          </div>
+
+          <div class="rail_panel">
+            <figure class="cut-card">
+              <img class="cut-card_image" src="assets/cut/cut-2.webp" alt="Ice cave interior lit from the mouth" loading="lazy">
+              <div class="cut-card_shade" aria-hidden="true"></div>
+              <figcaption class="cut-card_content">
+                <p class="cut-card_slug">EXT. ICE CAVE &middot; DAY</p>
+                <p class="cut-card_line">Blue ice, two hours from the stage door.</p>
+                <p class="cut-card_num">02 / 08</p>
+              </figcaption>
+            </figure>
+          </div>
+
+          <div class="rail_panel">
+            <figure class="cut-card">
+              <img class="cut-card_image" src="assets/cut/cut-3.webp" alt="Standing set under lighting rigs on a sound stage" loading="lazy">
+              <div class="cut-card_shade" aria-hidden="true"></div>
+              <figcaption class="cut-card_content">
+                <p class="cut-card_slug">INT. STAGE &middot; SET BUILD</p>
+                <p class="cut-card_line">Sets built, rigged and lit in house.</p>
+                <p class="cut-card_num">03 / 08</p>
+              </figcaption>
+            </figure>
+          </div>
+
+          <div class="rail_panel">
+            <figure class="cut-card">
+              <img class="cut-card_image" src="assets/cut/cut-4.webp" alt="Black sand beach with sea stacks at dusk" loading="lazy">
+              <div class="cut-card_shade" aria-hidden="true"></div>
+              <figcaption class="cut-card_content">
+                <p class="cut-card_slug">EXT. BLACK SAND &middot; DUSK</p>
+                <p class="cut-card_line">Black sand, north Atlantic surf, no permit queue.</p>
+                <p class="cut-card_num">04 / 08</p>
+              </figcaption>
+            </figure>
+          </div>
+
+          <div class="rail_panel">
+            <figure class="cut-card">
+              <img class="cut-card_image" src="assets/cut/cut-5.webp" alt="Crew shooting against a mountain backdrop on stage" loading="lazy">
+              <div class="cut-card_shade" aria-hidden="true"></div>
+              <figcaption class="cut-card_content">
+                <p class="cut-card_slug">INT. STAGE &middot; SHOOT DAY</p>
+                <p class="cut-card_line">The mountain on the backing, and the real one outside.</p>
+                <p class="cut-card_num">05 / 08</p>
+              </figcaption>
+            </figure>
+          </div>
+
+          <div class="rail_panel">
+            <figure class="cut-card">
+              <img class="cut-card_image" src="assets/cut/cut-6.webp" alt="Coastal mountain range mirrored in still water" loading="lazy">
+              <div class="cut-card_shade" aria-hidden="true"></div>
+              <figcaption class="cut-card_content">
+                <p class="cut-card_slug">EXT. MOUNTAIN COAST &middot; SUNSET</p>
+                <p class="cut-card_line">Ranges that read as another planet on camera.</p>
+                <p class="cut-card_num">06 / 08</p>
+              </figcaption>
+            </figure>
+          </div>
+
+          <div class="rail_panel">
+            <figure class="cut-card">
+              <img class="cut-card_image" src="assets/cut/cut-7.webp" alt="Atrium of the film village at Gufunes" loading="lazy">
+              <div class="cut-card_shade" aria-hidden="true"></div>
+              <figcaption class="cut-card_content">
+                <p class="cut-card_slug">INT. THE VILLAGE &middot; GUFUNES</p>
+                <p class="cut-card_line">Rental, VFX and post in the same yard.</p>
+                <p class="cut-card_num">07 / 08</p>
+              </figcaption>
+            </figure>
+          </div>
+
+          <div class="rail_panel">
+            <figure class="cut-card">
+              <img class="cut-card_image" src="assets/cut/cut-8.webp" alt="Braided glacial river from the air" loading="lazy">
+              <div class="cut-card_shade" aria-hidden="true"></div>
+              <figcaption class="cut-card_content">
+                <p class="cut-card_slug">EXT. GLACIAL RIVER &middot; AERIAL</p>
+                <p class="cut-card_line">Aerial units cleared and flying the same week.</p>
+                <p class="cut-card_num">08 / 08</p>
+              </figcaption>
+            </figure>
+          </div>
+
+          <div class="rail_panel rail_panel--full rail_panel--final">
+            <div class="rail_final-scrim" aria-hidden="true"></div>
+            <div class="rail_statement">
+              <p class="rail_statement_lead">Three stages in Gufunes.</p>
+              <p class="rail_statement_big display">EVERYTHING ELSE<br>IS OUTSIDE THE DOOR.</p>
+              <a class="btn" href="mailto:studios@rvkstudios.is"><span class="btn-label">START A PRODUCTION</span><span class="btn-cap" aria-hidden="true">&#8599;</span></a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </div>
 
   <!-- 7b · Manifesto: the argument -->
   <section class="argument">

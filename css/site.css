@@ -25,20 +25,27 @@ a{color:inherit;text-decoration:none}
 h1,h2,h3{text-wrap:balance}
 .page{position:relative;z-index:2}
 
-/* ---------- slate loader ---------- */
-.slate{
-  position:fixed;inset:0;z-index:100;background:#050607;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.4rem;
+/* ---------- slate loader: their own logo sting behind a film gate ---------- */
+.slate{position:fixed;inset:0;z-index:100;background:#000;overflow:hidden}
+.slate-film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.92}
+.slate-vig{position:absolute;inset:0;background:radial-gradient(70% 55% at 50% 46%,rgba(0,0,0,0) 0%,rgba(0,0,0,.55) 78%,rgba(0,0,0,.85) 100%)}
+.slate-inner{
+  position:absolute;left:0;right:0;bottom:clamp(2.4rem,7vh,4.6rem);z-index:3;
+  display:flex;flex-direction:column;align-items:center;gap:1.1rem;
+  padding-inline:clamp(1.2rem,4vw,3rem);opacity:0;
 }
-.slate-mark{
-  font-family:var(--tanker);font-size:clamp(1.4rem,2.6vw,2.2rem);
-  letter-spacing:.5em;text-indent:.5em;color:#8d9499;opacity:0;
-}
-.slate-tc{font-family:var(--mono);font-size:clamp(2rem,5vw,3.4rem);color:var(--ink);font-variant-numeric:tabular-nums}
-.slate-sub{font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;color:var(--mut);opacity:0}
-.slate.done{transition:clip-path .9s var(--ease);clip-path:inset(0 0 100% 0);pointer-events:none}
-html.no-motion .slate{transition:opacity .3s;clip-path:none}
-html.no-motion .slate.done{opacity:0}
+.slate-meta{display:flex;align-items:baseline;gap:1.4rem;font-family:var(--mono);font-size:.76rem;letter-spacing:.2em;color:var(--ink)}
+.slate-tc{font-variant-numeric:tabular-nums}
+.slate-sub{color:var(--mut)}
+.slate-rule{position:relative;width:min(46rem,68vw);height:1px;background:rgba(233,237,239,.18)}
+.slate-fill{position:absolute;inset:0 auto 0 0;width:0;background:var(--ice)}
+/* the gate: two blades that part to reveal the sting, shutter closed on hand-off */
+.gate{position:absolute;left:0;right:0;height:50.2%;background:#000;z-index:4}
+.gate-top{top:0}
+.gate-bot{bottom:0}
+html.no-motion .gate{height:0}
+html.no-motion .slate-inner{opacity:1}
+.slate.done{pointer-events:none}
 
 /* ---------- nav ---------- */
 .nav{
@@ -280,39 +287,49 @@ html.no-motion .arg-scrub .w{opacity:1}
 .breath{position:relative;z-index:1;background:var(--bg);height:62vh;display:flex;align-items:flex-end;justify-content:center;padding-bottom:3.4rem}
 .breath-cue{font-family:var(--mono);font-size:.74rem;letter-spacing:.28em;color:var(--mut)}
 
-/* ---------- the reel: INT / EXT cut by the scroll ---------- */
-.reel{position:relative;z-index:1;background:#050607;height:600vh}
-.reel-stage{position:sticky;top:0;height:100svh;overflow:hidden;background:#050607}
-.cut-layers{position:absolute;inset:0}
-.cut{position:absolute;inset:0;margin:0;will-change:clip-path,transform}
-.cut img{width:100%;height:100%;object-fit:cover}
-.cut::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,6,7,.5) 0%,rgba(5,6,7,.08) 34%,rgba(5,6,7,.2) 68%,rgba(5,6,7,.66) 100%)}
-.cut-seam{position:absolute;top:0;bottom:0;width:1px;background:var(--ice);opacity:0;z-index:4;pointer-events:none}
-.seam-tag{
-  position:absolute;top:50%;left:.6rem;transform:translateY(-50%);
-  font-family:var(--mono);font-size:.62rem;letter-spacing:.24em;color:var(--ice);white-space:nowrap;
+/* ---------- the rail: full-bleed horizontal travel (Obyggdasetur mechanic) ---------- */
+.rail_outer{position:relative;z-index:1;background:#050607}
+.rail_final-bg{position:absolute;inset:0;z-index:0}
+.rail_final-bg_scrim{position:absolute;inset:0;background:rgba(5,6,7,.22)}
+.rail{position:relative;z-index:1}
+.rail_wrapper{position:sticky;top:0;width:100%;height:100svh;overflow:hidden;color:var(--ink)}
+.rail_backdrops{position:absolute;inset:0;z-index:0}
+.rail_backdrop{position:absolute;inset:0;will-change:transform,clip-path;transform:translateZ(0)}
+.rail_backdrop--behind{z-index:0}
+.rail_backdrop--clipped{z-index:1;clip-path:url(#curtainClip)}
+.img-fill{width:100%;height:100%;object-fit:cover}
+.rail_overlay{position:absolute;inset:0;z-index:2;background:rgba(5,6,7,var(--rail-overlay,0));pointer-events:none}
+.rail_curtain{position:absolute;width:0;height:0}
+.rail_container{
+  position:relative;z-index:2;display:flex;height:100svh;width:fit-content;
+  will-change:transform;transform:translateZ(0);
 }
-.slug{
-  position:absolute;top:calc(1rem + 4.4rem);left:clamp(1.2rem,3vw,2.6rem);z-index:5;
-  font-family:var(--mono);font-size:.76rem;letter-spacing:.16em;color:var(--ink);
-  text-shadow:0 0 22px rgba(5,6,7,.9);
+.rail_panel{flex:0 0 auto;height:100svh;position:relative;display:flex;align-items:center;justify-content:center}
+.rail_panel--title{width:100vw}
+.rail_panel:not(.rail_panel--title):not(.rail_panel--full){width:calc(46vw + 6rem);padding-right:6rem}
+.rail_panel--full{width:100vw;padding-right:0;overflow:hidden}
+.rail_title-wrap{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;will-change:transform}
+.rail_title{
+  font-family:var(--tanker);font-weight:400;text-transform:uppercase;line-height:1;
+  font-size:5.6rem;text-align:center;white-space:nowrap;text-shadow:0 2px 30px rgba(0,0,0,.45);
 }
-.cut-count{
-  position:absolute;bottom:1.6rem;right:clamp(1.2rem,3vw,2.6rem);z-index:5;
-  font-family:var(--mono);font-size:.72rem;letter-spacing:.2em;color:var(--mut);
-  font-variant-numeric:tabular-nums;
-}
-.scope-bar{position:absolute;left:0;right:0;height:12vh;background:#050607;z-index:3;transform-origin:top}
-.sb-top{top:0;transform-origin:top}
-.sb-bot{bottom:0;transform-origin:bottom}
-html.no-motion .scope-bar{transform:scaleY(0)}
-.reel-payoff{
-  position:absolute;inset:auto 0 0 0;z-index:6;padding:0 clamp(1.2rem,3vw,2.6rem) clamp(4rem,9vh,7rem);
-  text-align:center;opacity:0;
-}
-.reel-payoff h2{font-size:clamp(1.7rem,4.2vw,3.6rem);line-height:.94;text-shadow:0 4px 40px rgba(5,6,7,.9)}
-.payoff-sub{margin-top:1rem;font-family:var(--mono);font-size:.76rem;letter-spacing:.1em;color:#c8ced2;text-shadow:0 0 20px rgba(5,6,7,.9)}
-html.no-motion .reel-payoff{opacity:1}
+.rail_kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.22em;color:#c8ced2;text-transform:uppercase}
+
+/* each panel is a framed plate, cinema-card */
+.cut-card{position:relative;width:46vw;max-height:78svh;aspect-ratio:16/10;overflow:hidden;margin:0}
+.cut-card_image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .75s var(--ease)}
+.cut-card_shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,6,7,.5) 0%,rgba(5,6,7,.05) 42%,rgba(5,6,7,.72) 100%);transition:opacity .5s var(--ease)}
+.cut-card:hover .cut-card_image{transform:scale(1.03)}
+.cut-card:hover .cut-card_shade{opacity:.72}
+.cut-card_content{position:absolute;inset:auto 0 0 0;z-index:2;padding:1.6rem 1.8rem;display:flex;flex-direction:column;gap:.5rem}
+.cut-card_slug{font-family:var(--mono);font-size:.76rem;letter-spacing:.16em;color:var(--ink)}
+.cut-card_line{font-size:.98rem;color:#c8ced2;max-width:30rem}
+.cut-card_num{position:absolute;top:-58svh;right:1.8rem;font-family:var(--mono);font-size:.72rem;letter-spacing:.2em;color:rgba(233,237,239,.72)}
+
+.rail_final-scrim{position:absolute;inset:0;background:rgba(5,6,7,.55)}
+.rail_statement{position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center;gap:1.6rem;padding-inline:6vw}
+.rail_statement_lead{font-family:var(--mono);font-size:.82rem;letter-spacing:.2em;color:var(--ice);text-transform:uppercase}
+.rail_statement_big{font-size:clamp(2rem,5vw,4.4rem);line-height:.92;text-shadow:0 4px 40px rgba(5,6,7,.8)}
 
 /* ---------- cta ---------- */
 .cta{padding:clamp(8rem,16vh,13rem) clamp(1.2rem,3vw,2.6rem);text-align:center}
@@ -367,10 +384,12 @@ html.no-motion .reel-payoff{opacity:1}
   .num-col:last-child{border-right:0}
   .slate-grid{grid-template-columns:1fr}
   .poster-plate{display:none}
-  .reel{height:460vh}
-  .slug{font-size:.66rem;top:calc(1rem + 3.6rem)}
-  .reel-payoff h2{font-size:clamp(1.4rem,6.4vw,2rem)}
-  .payoff-sub{font-size:.68rem}
+  .rail_title{font-size:2.6rem}
+  .rail_panel:not(.rail_panel--title):not(.rail_panel--full){width:calc(86vw + 1.5rem);padding-right:1.5rem}
+  .cut-card{width:86vw;aspect-ratio:4/5;max-height:70svh}
+  .cut-card_num{top:-52svh;right:1.1rem}
+  .cut-card_content{padding:1.1rem 1.2rem}
+  .rail_statement_big{font-size:clamp(1.5rem,7vw,2.2rem)}
   .offer-sub{text-align:center;max-width:92vw}
   .offer-line{white-space:normal;width:92vw;font-size:.9rem}
   .offer-key{font-size:1rem;margin-top:.4rem}

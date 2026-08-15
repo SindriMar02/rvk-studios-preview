@@ -7,9 +7,15 @@
   if (reduceMotion || !hasGsap) document.documentElement.classList.add('no-motion');
   if (hasGsap) gsap.registerPlugin(ScrollTrigger, CustomEase);
 
-  /* ---------- slate loader (with hard failsafe) ---------- */
+  /* ---------- slate loader: their logo sting behind a film gate ----------
+     blades part -> the mark forms -> counter and progress rule run -> the gate
+     shutters closed -> the slate is gone -> the blades open on the hero. */
   var slate = document.getElementById('slate');
   var slateTc = document.getElementById('slateTc');
+  var slateFill = document.getElementById('slateFill');
+  var slateFilm = document.getElementById('slateFilm');
+  var gateTop = document.getElementById('gateTop');
+  var gateBot = document.getElementById('gateBot');
   var slateDone = false;
   document.body.style.overflow = 'hidden';
 
@@ -22,29 +28,47 @@
     return p(h) + ':' + p(m) + ':' + p(s) + ':' + p(f);
   }
 
+  function finishSlate() {
+    if (slate) slate.style.display = 'none';
+    document.body.style.overflow = '';
+    heroIn();
+  }
+
   function endSlate() {
     if (slateDone) return;
     slateDone = true;
     slate.classList.add('done');
-    document.body.style.overflow = '';
-    heroIn();
+    if (!hasGsap || reduceMotion) { finishSlate(); return; }
+    /* shutter closed on the loader, then open on the hero */
+    gsap.timeline()
+      .to([gateTop, gateBot], { height: '50.2%', duration: .26, ease: 'power2.in' })
+      .add(finishSlate)
+      .to([gateTop, gateBot], { height: '0%', duration: .85, ease: 'expo.out' }, '+=0.05')
+      .set(slate, { display: 'none' });
   }
   /* failsafe: even if rAF never ticks (hidden tab), the page must open */
-  setTimeout(endSlate, reduceMotion ? 1000 : 5500);
+  setTimeout(endSlate, reduceMotion ? 900 : 5600);
 
   if (hasGsap && !reduceMotion) {
     var spool = CustomEase.create('spool',
       'M0,0 C0,0 0.11,0.35 0.22,0.44 0.3,0.51 0.34,0.51 0.42,0.55 0.5,0.59 0.49,0.57 0.55,0.61 0.61,0.65 0.63,0.74 0.72,0.83 0.8,0.91 1,1 1,1');
     var counter = { f: 0 };
+    if (slateFilm) slateFilm.play().catch(function () {});
     var tl = gsap.timeline({ onComplete: endSlate });
-    tl.to(counter, {
-      f: 96, duration: 4, ease: spool,
-      onUpdate: function () { slateTc.textContent = tcString(counter.f, 24); }
-    })
-      .to('.slate-mark', { opacity: 1, duration: .8, ease: 'power1.out' }, .4)
-      .to('.slate-sub', { opacity: 1, duration: .8, ease: 'power1.out' }, .9);
+    /* the gate parts */
+    tl.fromTo([gateTop, gateBot], { height: '50.2%' },
+      { height: '0%', duration: 1.1, ease: 'expo.out' }, 0)
+      .to('.slate-inner', { opacity: 1, duration: .6, ease: 'power2.out' }, .45)
+      .to(counter, {
+        f: 96, duration: 4, ease: spool,
+        onUpdate: function () {
+          slateTc.textContent = tcString(counter.f, 24);
+          slateFill.style.width = (counter.f / 96 * 100) + '%';
+        }
+      }, .2);
   } else {
     slateTc.textContent = '00:00:04:00';
+    if (slateFill) slateFill.style.width = '100%';
   }
 
   /* ---------- hero entrance: CA char slide-in (opacity 0, x 24%, scale 1.1, stagger .05) ---------- */
@@ -230,76 +254,88 @@
     plates.forEach(function (plate) { var p = plate.querySelector('.pp'); if (p) p.classList.add('is-active'); });
   }
 
-  /* ---------- the reel: scroll cuts INT against EXT ----------
-     Each frame is revealed over the previous one by a wipe whose direction alternates,
-     so the seam sweeps back and forth like an edit being made under the reader. */
-  var layers = Array.prototype.slice.call(document.querySelectorAll('.cut'));
-  if (layers.length) {
-    var seam = document.getElementById('cutSeam');
-    var slugEl = document.getElementById('slugNow');
-    var countEl = document.getElementById('cutCount');
-    var N = layers.length;
-    var lastSlug = -1;
+  /* ---------- THE RAIL (Obyggdasetur mechanic, transplanted exactly) ----------
+     pin length = 1.5vh (title) + 1vh (curtain) + 1.5 x travel; the container slides
+     -L while the title panel counter-translates +L so it stays visually pinned;
+     mid-rail the behind plate wipes away and the overlay darkens to .4 */
+  var railOuter = document.getElementById('reel');
+  var rail = document.getElementById('rail');
+  var railContainer = document.getElementById('railContainer');
+  var railTitleWrap = document.querySelector('.rail_title-wrap');
+  var railTitle = document.getElementById('railTitle');
+  var railBehind = document.getElementById('railBehind');
+  var railOverlay = document.getElementById('railOverlay');
+  var curtainRects = Array.prototype.slice.call(document.querySelectorAll('#curtainClip rect'));
 
-    function paint(p) {
-      /* the stage unpins at 5/6 of the section, so every beat lives inside that window */
-      var t = Math.min(1, p / 0.62);
-      var pos = t * (N - 1);
-      var i = Math.min(Math.floor(pos), N - 2);
-      var f = N > 1 ? pos - i : 0;
-      if (t >= 1) { i = N - 2; f = 1; }
+  if (railOuter && hasGsap && !reduceMotion) {
+    var vhx = function () { return window.innerHeight; };
+    var railTravel = function () { return railContainer.scrollWidth - window.innerWidth; };
 
-      layers.forEach(function (el, j) {
-        if (j < i) { el.style.opacity = '0'; el.style.clipPath = 'inset(0 0 0 0)'; return; }
-        el.style.opacity = '1';
-        if (j === i) {
-          el.style.clipPath = 'inset(0 0 0 0)';
-          el.style.transform = 'scale(' + (1 + 0.05 * f).toFixed(4) + ')';
-        } else if (j === i + 1) {
-          /* even cuts wipe in from the right, odd cuts from the left */
-          var pct = ((1 - f) * 100).toFixed(2);
-          el.style.clipPath = (i % 2 === 0)
-            ? 'inset(0 0 0 ' + pct + '%)'
-            : 'inset(0 ' + pct + '% 0 0)';
-          el.style.transform = 'scale(' + (1.06 - 0.06 * f).toFixed(4) + ')';
-        } else {
-          el.style.opacity = '0';
-          el.style.clipPath = (i % 2 === 0) ? 'inset(0 0 0 100%)' : 'inset(0 100% 0 0)';
+    gsap.fromTo(railOuter, { clipPath: 'inset(0% 8% 0% 8%)' },
+      { clipPath: 'inset(0% 0% 0% 0%)', ease: 'none',
+        scrollTrigger: { trigger: railOuter, start: 'top bottom', end: 'top top', scrub: true, refreshPriority: 6 } });
+    gsap.fromTo(railBehind, { yPercent: 14 }, { yPercent: 0, ease: 'none',
+      scrollTrigger: { trigger: railOuter, start: 'top 60%', end: 'top top', scrub: true, refreshPriority: 6 } });
+
+    var railTl = null;
+    function buildRail() {
+      if (railTl) {
+        railTl.scrollTrigger && railTl.scrollTrigger.kill();
+        railTl.kill();
+        gsap.set([railContainer, railTitleWrap], { clearProps: 'x' });
+        gsap.set(railBehind, { clearProps: 'clipPath' });
+        gsap.set(railOverlay, { '--rail-overlay': 0 });
+        curtainRects.forEach(function (r, i) {
+          r.setAttribute('width', '0.3334');
+          r.setAttribute('x', String(i * 0.3333));
+        });
+        gsap.set(railTitle, { clearProps: 'fontSize' });
+      }
+      var H = vhx();
+      var L = railTravel();
+      var sText = 1.5 * H;
+      var sCurtain = 1 * H;
+      var sX = 1.5 * L;
+      var small = window.innerWidth <= 860;
+      var grown = small ? 3.6 : 8.4;
+      var settled = small ? 2.6 : 5.6;
+
+      railTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: rail, start: 'top top',
+          end: '+=' + (sText + sCurtain + sX),
+          pin: true, scrub: true, invalidateOnRefresh: true, refreshPriority: 5
         }
       });
+      railTl.fromTo(railTitle, { fontSize: grown + 'rem' },
+        { fontSize: settled + 'rem', ease: 'none', duration: 0.5 * sText }, 0);
 
-      /* the seam rides the wipe edge, and disappears between cuts */
-      var edge = (i % 2 === 0) ? (1 - f) : f;
-      seam.style.left = (edge * 100) + '%';
-      seam.style.opacity = (f > 0.02 && f < 0.98) ? '1' : '0';
-      seam.querySelector('.seam-tag').style.textAlign = (i % 2 === 0) ? 'left' : 'right';
+      var tCurtain = 0.5 * sText;
+      railTl.to(curtainRects[2], { attr: { width: 0 }, ease: 'none', duration: 0.5 * sCurtain }, tCurtain);
+      railTl.to(curtainRects[1], { attr: { width: 0 }, ease: 'none', duration: 0.75 * sCurtain }, tCurtain);
+      railTl.to(curtainRects[0], { attr: { width: 0 }, ease: 'none', duration: 1.0 * sCurtain }, tCurtain);
 
-      /* the slugline belongs to whichever frame owns most of the screen */
-      var shown = f > 0.5 ? i + 1 : i;
-      if (shown !== lastSlug) {
-        lastSlug = shown;
-        slugEl.innerHTML = layers[shown].getAttribute('data-slug');
-        countEl.textContent = String(shown + 1).padStart(2, '0') + ' / ' + String(N).padStart(2, '0');
-      }
+      var tX = tCurtain + 0.3 * sCurtain;
+      railTl.to(railContainer, { x: -L, ease: 'none', duration: sX }, tX);
+      railTl.to(railTitleWrap, { x: L, ease: 'none', duration: sX }, tX);
+
+      var tWipe = tX + 0.35 * sX;
+      railTl.to(railBehind, { clipPath: 'inset(0% 100% 0% 0%)', ease: 'none', duration: 0.45 * sX }, tWipe);
+      railTl.to(railOverlay, { '--rail-overlay': 0.4, ease: 'none', duration: 0.45 * sX }, tWipe);
+      /* the title panel hands over to the closing statement */
+      railTl.to(railTitleWrap, { autoAlpha: 0, ease: 'none', duration: 0.08 * sX }, tX + 0.8 * sX);
     }
+    gsap.set(railOverlay, { '--rail-overlay': 0 });
+    buildRail();
 
-    paint(0);
-
-    if (hasGsap && !reduceMotion) {
-      ScrollTrigger.create({
-        trigger: '.reel', start: 'top top', end: 'bottom bottom', scrub: true,
-        onUpdate: function (self) { paint(self.progress); }
-      });
-      gsap.timeline({ scrollTrigger: { trigger: '.reel', start: 'top top', end: 'bottom bottom', scrub: true } })
-        .to('.scope-bar', { scaleY: 0, duration: .06, ease: 'power2.out' }, 0)
-        .to('#reelPayoff', { opacity: 1, duration: .05 }, .66)
-        .to('.slug, .cut-count', { opacity: 0, duration: .04 }, .66)
-        .to('.scope-bar', { scaleY: 1, duration: .05, ease: 'power2.inOut' }, .78);
-    } else {
-      paint(1);
-      layers[N - 1].style.opacity = '1';
-      layers[N - 1].style.clipPath = 'inset(0 0 0 0)';
-    }
+    var railResize;
+    window.addEventListener('resize', function () {
+      clearTimeout(railResize);
+      railResize = setTimeout(function () { buildRail(); ScrollTrigger.refresh(); }, 220);
+    });
+  } else if (railOuter) {
+    curtainRects.forEach(function (r) { r.setAttribute('width', '0'); });
+    railContainer.style.overflowX = 'auto';
   }
 
   /* ---------- argument: word-by-word scrub reveal (CA PERFECTION paragraph device) ---------- */

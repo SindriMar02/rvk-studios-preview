@@ -267,7 +267,8 @@
     }
 
     if (hasGsap && !reduceMotion) {
-      ScrollTrigger.create({ trigger: '.film', start: 'top 120%', once: true, onEnter: loadFrames });
+      ScrollTrigger.create({ trigger: '.film', start: 'top bottom+=250%', once: true, onEnter: loadFrames });
+      if ('requestIdleCallback' in window) requestIdleCallback(loadFrames, { timeout: 6000 });
 
       ScrollTrigger.create({
         trigger: '.film', start: 'top top', end: 'bottom bottom', scrub: true,
@@ -286,14 +287,17 @@
 
       /* kvik insertion mid-chapter */
       var kvik = document.getElementById('kvik');
+      var myndEl = document.querySelector('.mynd');
       var kvikW = 0;
       function measureKvik() {
-        kvik.style.width = 'auto';
-        kvikW = kvik.scrollWidth;
-        kvik.style.width = '0px';
+        kvikW = kvik.getBoundingClientRect().width;
+        gsap.set(myndEl, { x: kvikW / 2 });
       }
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(measureKvik);
       measureKvik();
-      window.addEventListener('resize', measureKvik);
+      window.addEventListener('resize', function () {
+        gsap.set(myndEl, { x: 0 }); measureKvik(); ScrollTrigger.refresh();
+      });
       /* chapter choreography: canvas rides the whole scroll; word arrives, morphs, hands
          back to the film so the drone landing on the RVK mark plays clean at the end */
       gsap.set('.mynd-wrap', { opacity: 0, y: 40 });
@@ -304,9 +308,8 @@
         .to('.fn-1', { opacity: 1, duration: .05 }, .06)
         .to('.mynd-wrap', { opacity: 1, y: 0, duration: .08 }, .1)
         .to('.fn-1', { opacity: 0, duration: .05 }, .26)
-        .to(kvik, {
-          width: function () { return kvikW; }, opacity: 1, duration: .18, ease: 'none'
-        }, .3)
+        .to(kvik, { opacity: 1, duration: .18, ease: 'none' }, .3)
+        .to(myndEl, { x: 0, duration: .18, ease: 'none' }, .3)
         .to('.mynd-gloss', { opacity: 1, duration: .07 }, .48)
         .to('.fn-2', { opacity: 1, duration: .05 }, .56)
         .to('.film-keep', { opacity: 1, duration: .05 }, .62)

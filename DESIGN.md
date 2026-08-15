@@ -47,11 +47,17 @@ brand film does.
 7. **Filmography scrub**: center list of 6 titles (Apex, King and Conqueror, Touch,
    Beast, Against the Ice, Katla) scrub-activated; their REAL posters crossfade in two
    corner-bracket plates flanking the list. Tail line links the full 30-title slate.
-8. **The signature chapter** (tall scroll): giant lowercase "mynd." (Cabinet Grotesk,
-   the ONLY lowercase display moment) gains ice-colored "kvik" mid-scroll → "kvikmynd."
-   with the gloss "kvik: living. mynd: image. The Icelandic word for film is the living
-   image." Beneath it the canvas scrubs their drone brand film (142 frames, 2.39:1)
-   descending onto the stitched RVK mark. Corner statements drift in/out.
+8. **The reel (signature chapter, replaces the retired word-morph).** THE CUT: eight
+   full-bleed frames alternate INT stage against EXT Iceland, each revealed by a wipe
+   whose direction flips every cut so the seam sweeps back and forth like an edit being
+   made under the reader. Real screenplay sluglines track it (INT. STAGE 1 · GUFUNES /
+   EXT. ICE CAVE · DAY ...), a mono counter reads 04 / 08, an ice seam line carries a
+   CUT tag, scope bars open at the start and close on the payoff:
+   "INT. AND EXT. WITHOUT LEAVING THE COUNTRY." A black beat with a "CUT TO:" cue sits
+   before it so the page breathes (the reference earns its chapter with emptiness).
+   Why this and not the reference's device: the etymology gag was inert to an
+   international buyer and its payoff was a logo the visitor already saw in the nav.
+   The cut IS the client's pitch: stages plus the country outside the door.
 9. **CTA + footer**: "THE SCRIPT IS READY. NOW IT NEEDS ICELAND." + one-line verified
    incentive fact + single CTA "START A PRODUCTION" (mailto studios@rvkstudios.is,
    arrow-block cap). Footer: EXPLORE / CONNECT / SOCIAL columns, dotted rules,
@@ -60,29 +66,30 @@ brand film does.
 ## Motion table — load/entrance
 | Element | Effect | Spec |
 |---|---|---|
-| Slate timecode | 00:00:00:00→00:00:04:00 | 4s, CustomEase multi-plateau (spool feel), counts frames at 24fps |
-| Wordmark | fade + letterspace settle | opacity 0→1 .8s, tracking .5em→.34em, power2.out |
-| Loader exit | curtain lift | clip-path inset(0 0 0 0)→inset(0 0 100% 0) .9s expo.inOut; body scroll unlocked after; **failsafe setTimeout(5500) forces exit** |
-| Hero headline | per-line rise | SplitText-free: two .line spans, y 110%→0, .9s, stagger .12, expo.out, starts at loader exit |
-| Hero bracket sub + bar | fade up | y 16→0 opacity 0→1 .7s, delay .35 |
-| Reduced motion | all entrances render final state instantly; loader shows one static slate frame then exits at 1s |
+| Slate timecode | 00:00:00:00 → 00:00:04:00 | 4s, CustomEase `spool` (multi-plateau, tape-spool feel), counts real frames at 24fps |
+| Slate wordmark | fade up | opacity 0→1, .8s power1.out at t=0.4 |
+| Slate location line | fade | opacity 0→1, .8s power1.out at t=0.9 |
+| Loader exit | curtain lift | clip-path inset(0 0 0 0) → inset(0 0 100% 0), .9s cubic-bezier(.32,.72,0,1); body scroll released; **hard setTimeout failsafe at 5500ms (1000ms under reduced motion)** |
+| Hero headline | per-char slide-in | chars (inside nowrap word wrappers): opacity 0→1, x 24%→0, scale 1.1→1, .35s, stagger .045, power1.out |
+| Hero sub + deck | fade up | opacity 0→1, .7s, stagger .12, power2.out, delay .55 |
+| Reduced motion | `html.no-motion` renders every entrance at its final state; loader exits at 1s |
 
 ## Motion table — scroll/idle
 | Element | Effect | Spec |
 |---|---|---|
-| Lenis | glide | duration 1.6 (calmer than CA's 2.4 to respect INP), mouseMultiplier .7, touch native |
-| Broadcast bar | live timecode + playhead | rAF synced to video.currentTime; frames = floor(t*24)%24; playhead left = t/duration*100% on tick-ruler (repeating-linear-gradient) |
-| h2 display headings | char blur-reveal | chars via manual split, blur 8px→0 + opacity .35→1, stagger .04, power2.out, trigger top 80% |
-| Focus-pull list | scrub active index | one ScrollTrigger scrub over block; activeIdx=floor(progress*4); inactive blur(6px)/.68/steel, active none/1/white; ice stage letter opacity flips |
-| Filmography | scrub active + poster crossfade | same activeIdx pattern; poster plates opacity .35s crossfade, corner brackets static |
-| Case clips | lazy + hover | load at top 150% once; play on enter viewport, pause on leave |
-| Film-strip rail | vertical marquee | gsap yPercent -50 linear repeat -1, 26s, pauses under reduced motion |
-| Canvas scrub | frame sequence | 142 desktop / 107 mobile webp; preload on approach (top 120%); scrub maps progress→index; DPR-aware, cover-crop; redraw only on index change |
-| mynd→kvikmynd | width tween | "kvik" span width 0→auto (measured), opacity 0→1, ice; scrubbed over chapter middle; both renderings share identical markup to avoid kerning ghost |
-| Corner statements | drift | y ±40 opacity 0→1→0 scrubbed at chapter thirds |
-| CTA arrow block | hover | arrow translates ↗ 4px, block brightens, 260ms cubic-bezier(.32,.72,0,1); :active scale .98 |
-| Footer email | copy tooltip | "copied" fades in, auto-hides 2.4s |
-| Reduced motion | scrubs render final states; canvas shows last frame (logo); marquee stops; blur list all-sharp |
+| Lenis | glide | duration **2.4**, mouseMultiplier **0.5**, expo-out easing (matched to the reference) |
+| Hero stage | sticky hand-off | `.hero{position:sticky;top:0}`; scrubbed over its own height: dim 0→.72, video scale 1→1.14, copy y 0→-90 + opacity 1→0, deck opacity→0 at .35. The manifesto is **transparent**, so its type flows over the still-playing reel; that section's own gradient closes to black by 46% and retires the stage |
+| Display headings | per-char blur reveal | blur 8px→0, opacity .35→1, stagger .04, power2.out, trigger top 82% |
+| Case rails | vertical drift | yPercent ±34, direction alternating per row, scrubbed across each rail's viewport pass |
+| Case clips | lazy + viewport play | armed once at top 150%; play on enter (top 85% / bottom 10%), pause on leave |
+| Partner marquee | infinite ticker | x → -setWidth, 36s linear, repeat -1 (one marquee on the page) |
+| Focus pull (offer) | scrub active index | activeIdx = floor(progress × 4); inactive blur(6px)/opacity .68/steel → active sharp/white; ice [0N] index and the mix-blend-difference line fade .35s |
+| Filmography | scrub active + poster crossfade | same activeIdx over 6 titles; poster plates crossfade .38s inside corner brackets |
+| **The reel (signature)** | scroll cuts INT against EXT | `t = min(1, p/0.62)` keeps every beat inside the pinned window; `pos = t×(N-1)`; current frame holds `inset(0 0 0 0)` + scale 1→1.05; incoming frame wipes via clip-path inset from the **alternating** side + scale 1.06→1; seam line rides the wipe edge and hides outside f∈(.02,.98); slugline + counter switch at f>.5; scope bars scaleY 1→0 at open and →1 at .78; payoff opacity→1 at .66 |
+| Argument paragraph | word-by-word reveal | opacity .14→1, stagger .6, scrubbed top 78% → bottom 45% |
+| CTA arrow block | hover | cap translate(2px,-2px) + brightness 1.08, 260ms cubic-bezier(.32,.72,0,1); :active scale .98 |
+| Footer email | copy tooltip | "copied" fades in, auto-hides after 2.4s |
+| Reduced motion | reel renders its final frame + payoff, marquees stop, blur list all-sharp, hero dim 0, scope bars open |
 
 ## Anti-slop gates honored
 No em-dashes anywhere. No "Scroll to explore" (banned; broadcast bar is the cue).

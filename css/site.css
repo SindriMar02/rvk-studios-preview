@@ -121,7 +121,6 @@ html.no-motion .rec-dot{animation:none}
 .work,.offer,.numbers,.partners,.slate-sec,.argument,.cta,.footer{
   position:relative;z-index:1;background:var(--bg);
 }
-.film{position:relative;z-index:1}
 
 /* ---------- manifesto ---------- */
 .manifesto{

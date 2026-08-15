@@ -88,6 +88,17 @@
     });
   }
 
+  /* ---------- hero stage: darkens and pushes in as the intro scrolls over it ---------- */
+  if (hasGsap && !reduceMotion) {
+    gsap.timeline({
+      scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+    })
+      .to('#heroDim', { opacity: .62, ease: 'none' }, 0)
+      .to('.hero-video', { scale: 1.12, ease: 'none' }, 0)
+      .to('.hero-copy', { y: -60, opacity: .35, ease: 'none' }, 0)
+      .to('.deck', { opacity: 0, ease: 'none' }, .55);
+  }
+
   /* ---------- broadcast deck: timecode from the reel ---------- */
   var video = document.getElementById('heroVideo');
   var deckTc = document.getElementById('deckTc');
@@ -131,6 +142,19 @@
         scrollTrigger: { trigger: el, start: 'top 82%' }
       });
   });
+
+  /* ---------- case rails: slow vertical drift, alternating direction ---------- */
+  if (hasGsap && !reduceMotion) {
+    document.querySelectorAll('.case-rail').forEach(function (rail, i) {
+      var track = rail.querySelector('.rail-track');
+      if (!track) return;
+      var dir = i % 2 === 0 ? -1 : 1;
+      gsap.fromTo(track,
+        { yPercent: dir < 0 ? 0 : -34 },
+        { yPercent: dir < 0 ? -34 : 0, ease: 'none',
+          scrollTrigger: { trigger: rail, start: 'top bottom', end: 'bottom top', scrub: true } });
+    });
+  }
 
   /* ---------- partner logo marquee (CA scroll-line) ---------- */
   if (hasGsap && !reduceMotion) {
@@ -198,8 +222,8 @@
   if (canvas) {
     var ctx = canvas.getContext('2d');
     var isMobile = window.innerWidth <= 640;
-    var TOTAL = isMobile ? 107 : 142;
-    var DIR = isMobile ? 'assets/seq-m/' : 'assets/seq/';
+    var TOTAL = isMobile ? 107 : 124;
+    var DIR = isMobile ? 'assets/seq2-m/' : 'assets/seq2/';
     var frames = [];
     var current = -1;
     var loaded = false;
@@ -219,7 +243,7 @@
     }
 
     function resizeCanvas() {
-      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      var dpr = Math.min(window.devicePixelRatio || 1, 1.8);
       canvas.width = canvas.offsetWidth * dpr;
       canvas.height = canvas.offsetHeight * dpr;
       ctx.imageSmoothingEnabled = true;
@@ -248,9 +272,14 @@
       ScrollTrigger.create({
         trigger: '.film', start: 'top top', end: 'bottom bottom', scrub: true,
         onUpdate: function (self) {
+          /* non-linear map: hold the aerial while the word works (0 - .62),
+             then run the descent onto the mark once the word has cleared */
           var p = self.progress;
-          /* canvas frames ride the whole chapter */
-          var idx = Math.min(Math.floor(p * TOTAL), TOTAL - 1);
+          var LAND = 0.52;                      /* frame where the mark starts landing */
+          var f = p < 0.62
+            ? (p / 0.62) * LAND
+            : LAND + ((p - 0.62) / 0.38) * (1 - LAND);
+          var idx = Math.min(Math.floor(f * TOTAL), TOTAL - 1);
           if (idx !== current) { current = idx; drawFrame(idx); }
         }
       });
@@ -271,7 +300,8 @@
       gsap.timeline({
         scrollTrigger: { trigger: '.film', start: 'top top', end: 'bottom bottom', scrub: true }
       })
-        .to('.fn-1', { opacity: 1, duration: .05 }, .03)
+        .to('.scope-bar', { scaleY: 0, duration: .1, ease: 'power2.out' }, 0)
+        .to('.fn-1', { opacity: 1, duration: .05 }, .06)
         .to('.mynd-wrap', { opacity: 1, y: 0, duration: .08 }, .1)
         .to('.fn-1', { opacity: 0, duration: .05 }, .26)
         .to(kvik, {
@@ -283,7 +313,8 @@
         .to('.fn-2', { opacity: 0, duration: .05 }, .72)
         .to('.mynd-gloss', { opacity: 0, duration: .06 }, .76)
         .to('.mynd-wrap', { opacity: 0, y: -40, duration: .08 }, .8)
-        .to('.film-keep', { opacity: 0, duration: .05 }, .9);
+        .to('.film-keep', { opacity: 0, duration: .05 }, .86)
+        .to('.scope-bar', { scaleY: 1, duration: .08, ease: 'power2.inOut' }, .9);
     } else {
       /* static: last frame (the mark) */
       var img = new Image();

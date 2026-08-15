@@ -11,6 +11,7 @@
 <link rel="preload" href="fonts/cabinet-grotesk/fonts/CabinetGrotesk-Regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="fonts/tanker/css/tanker.css">
 <link rel="stylesheet" href="fonts/cabinet-grotesk/css/cabinet-grotesk.css">
+<link rel="stylesheet" href="fonts/clash-display/css/clash-display.css">
 <link rel="stylesheet" href="css/site.css">
 </head>
 <body>
@@ -38,12 +39,13 @@
 
 <main class="page">
 
-  <!-- 1 · Hero -->
+  <!-- 1 · Hero (sticky stage: the intro scrolls up over the held reel) -->
   <section class="hero">
     <video class="hero-video" autoplay muted loop playsinline preload="metadata" poster="assets/hero-poster.jpg" id="heroVideo">
       <source src="assets/hero-reel.mp4" type="video/mp4">
     </video>
     <div class="hero-wash" aria-hidden="true"></div>
+    <div class="hero-dim" id="heroDim" aria-hidden="true"></div>
     <div class="hero-copy">
       <h1 class="hero-h1">
         <span class="line-mask"><span class="line">DIRECTOR LED.</span></span>
@@ -79,78 +81,92 @@
     <h2 class="mani-bottom display" data-split>TO THE WORLD.</h2>
   </section>
 
-  <!-- 3 · Selected work -->
+  <!-- 3 · Selected work: full-width rows, rail | stage | credits -->
   <section class="work" id="work">
-    <h2 class="sec-h display" data-split>SELECTED WORK</h2>
-    <p class="sec-sub">Directed at RVK Studios, shot in Iceland,<br>seen everywhere.</p>
+    <div class="work-head">
+      <h2 class="sec-h display" data-split>SELECTED WORK</h2>
+      <p class="sec-sub">Directed at RVK Studios, shot in Iceland, seen everywhere.</p>
+    </div>
 
     <article class="case">
-      <div class="case-main has-rail">
       <div class="case-rail" aria-hidden="true">
         <div class="rail-track">
           <img src="assets/ishellir-small-copy-1500x630.jpg" alt="" loading="lazy">
-          <img src="assets/Studio-pic-seq-mynd-3AA_graded-1500x630.jpg" alt="" loading="lazy">
-          <img src="assets/Solarlag-fjalla-small-copy-1500x630.jpg" alt="" loading="lazy">
-          <img src="assets/CC_PIC-2-INT-RVK-Studios-mars-2023-copy-1500x630.jpg" alt="" loading="lazy">
           <img src="assets/Top-view-arfarvegur-small-copy-1500x630.jpg" alt="" loading="lazy">
+          <img src="assets/Solarlag-fjalla-small-copy-1500x630.jpg" alt="" loading="lazy">
+          <img src="assets/Fjordur-fjoll-vegur-small-copy-1500x630.jpg" alt="" loading="lazy">
         </div>
       </div>
-        <figure class="plate plate-portrait">
-          <img src="assets/EN-US_APE_Main_Crevasse_Vertical_27x40_RGB_PRE-1013x1500.jpg" alt="Apex film poster" loading="lazy">
-          <div class="plate-stat"><span class="ps-big">APR&nbsp;24</span><span class="ps-small">2026 premiere</span><span class="ps-right">[&nbsp;Apex&nbsp;]<br>Netflix Original</span></div>
-          <i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i>
-        </figure>
-        <div class="case-text">
-          <p class="case-index">[&nbsp;01</p>
-          <h3 class="case-title display">APEX</h3>
-          <p class="case-meta">NETFLIX · 24 APRIL 2026</p>
-          <p class="case-desc">[ A feature directed by Baltasar Kormákur, with Charlize
-          Theron and Taron Egerton. Shot where the story lives: on rock, ice and
-          weather that no set could fake.</p>
-        </div>
-      </div>
-    </article>
-
-    <article class="case">
-      <div class="case-main is-video">
-        <figure class="plate plate-wide">
-          <video muted loop playsinline preload="none" poster="assets/case-trapped-poster.jpg" class="case-video">
-            <source data-src="assets/case-trapped.mp4" type="video/mp4">
-          </video>
-          <div class="plate-stat"><span class="ps-big">PRIX EUROPA</span><span class="ps-small">2016 winner</span><span class="ps-right">[&nbsp;Trapped&nbsp;]<br>Television series</span></div>
-          <i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i>
-          <span class="plate-cross" aria-hidden="true">+</span>
-        </figure>
-        <div class="case-text">
-          <p class="case-index">[&nbsp;02</p>
-          <h3 class="case-title display">TRAPPED</h3>
-          <p class="case-meta">PRIX EUROPA 2016</p>
-          <p class="case-desc">[ The series that proved Icelandic television travels.
-          Created by Baltasar Kormákur, awarded best episode of a TV fiction series
-          at Prix Europa 2016.</p>
-        </div>
+      <figure class="plate">
+        <img class="plate-media" src="assets/ishellir-small-copy-1500x630.jpg" alt="Ice cave interior, Iceland" loading="lazy">
+        <div class="plate-stat"><span class="ps-big">APR&nbsp;24</span><span class="ps-small">2026 premiere</span><span class="ps-right">[&nbsp;Apex&nbsp;]<br>Netflix Original</span></div>
+        <img class="one-sheet" src="assets/EN-US_APE_Main_Crevasse_Vertical_27x40_RGB_PRE-1013x1500.jpg" alt="Apex poster" loading="lazy">
+        <i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i>
+        <span class="plate-cross" aria-hidden="true">+</span>
+      </figure>
+      <div class="case-text">
+        <p class="case-index">[&nbsp;01</p>
+        <h3 class="case-title display">APEX</h3>
+        <p class="case-meta">NETFLIX · 24 APRIL 2026</p>
+        <p class="case-desc">[ Directed by Baltasar Kormákur, with Charlize Theron and
+        Taron Egerton. Shot where the story lives: on rock, ice and weather that no set
+        could fake.</p>
       </div>
     </article>
 
     <article class="case">
-      <div class="case-main is-video is-flip">
-        <figure class="plate plate-wide">
-          <video muted loop playsinline preload="none" poster="assets/hero-poster.jpg" class="case-video">
-            <source data-src="assets/case-everest.mp4" type="video/mp4">
-          </video>
-          <div class="plate-stat"><span class="ps-big">8,848&nbsp;M</span><span class="ps-small">rebuilt at sea level</span><span class="ps-right">[&nbsp;Everest&nbsp;]<br>Universal Pictures</span></div>
-          <i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i>
-          <span class="plate-cross" aria-hidden="true">+</span>
-        </figure>
-        <div class="case-text">
-          <p class="case-index">[&nbsp;03</p>
-          <h3 class="case-title display">EVEREST</h3>
-          <p class="case-meta">UNIVERSAL · 2015</p>
-          <p class="case-desc">[ A mountain built on an Icelandic stage and finished at
-          altitude. Directed by Baltasar Kormákur for Universal Pictures.</p>
+      <div class="case-rail" aria-hidden="true">
+        <div class="rail-track">
+          <img src="assets/Svartur-sandur-solarlag-small-copy-1500x630.jpg" alt="" loading="lazy">
+          <img src="assets/studio1-1500x630.jpg" alt="" loading="lazy">
+          <img src="assets/CC_PIC-1-INT-RVK-Studiosmars-2023-copy-1500x630.jpg" alt="" loading="lazy">
+          <img src="assets/Studio-pic-seq-mynd-5AA_graded-1500x630.jpg" alt="" loading="lazy">
         </div>
       </div>
+      <figure class="plate">
+        <video class="plate-media case-video" muted loop playsinline preload="none" poster="assets/case-trapped-poster.jpg">
+          <source data-src="assets/case-trapped.mp4" type="video/mp4">
+        </video>
+        <div class="plate-stat"><span class="ps-big">PRIX EUROPA</span><span class="ps-small">2016 winner</span><span class="ps-right">[&nbsp;Trapped&nbsp;]<br>Television series</span></div>
+        <i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i>
+        <span class="plate-cross" aria-hidden="true">+</span>
+      </figure>
+      <div class="case-text">
+        <p class="case-index">[&nbsp;02</p>
+        <h3 class="case-title display">TRAPPED</h3>
+        <p class="case-meta">PRIX EUROPA 2016</p>
+        <p class="case-desc">[ The series that proved Icelandic television travels.
+        Created by Baltasar Kormákur, awarded best episode of a TV fiction series at
+        Prix Europa 2016.</p>
+      </div>
     </article>
+
+    <article class="case">
+      <div class="case-rail" aria-hidden="true">
+        <div class="rail-track">
+          <img src="assets/CC_PIC-3-INT-RVK-Studios-mars-2023-copy-1-1500x630.jpg" alt="" loading="lazy">
+          <img src="assets/CC-Cropped-pic-3A-RVK-Studio-1-2-3-render-EXT-R-copy-1500x630.png" alt="" loading="lazy">
+          <img src="assets/Studio-pic-seq-mynd-3AA_graded-1500x630.jpg" alt="" loading="lazy">
+          <img src="assets/CC_PIC-4-INT-RVK-Studios-mars-2023-copy-1500x630.jpg" alt="" loading="lazy">
+        </div>
+      </div>
+      <figure class="plate">
+        <video class="plate-media case-video" muted loop playsinline preload="none" poster="assets/case-everest-poster.jpg">
+          <source data-src="assets/case-everest.mp4" type="video/mp4">
+        </video>
+        <div class="plate-stat"><span class="ps-big">8,848&nbsp;M</span><span class="ps-small">rebuilt at sea level</span><span class="ps-right">[&nbsp;Everest&nbsp;]<br>Universal Pictures</span></div>
+        <i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i>
+        <span class="plate-cross" aria-hidden="true">+</span>
+      </figure>
+      <div class="case-text">
+        <p class="case-index">[&nbsp;03</p>
+        <h3 class="case-title display">EVEREST</h3>
+        <p class="case-meta">UNIVERSAL · 2015</p>
+        <p class="case-desc">[ A mountain built on an Icelandic stage and finished at
+        altitude. Directed by Baltasar Kormákur for Universal Pictures.</p>
+      </div>
+    </article>
+
     <div class="work-more">
       <p class="wm-lead">Thirty productions since 101 Reykjavík.</p>
       <a class="btn" href="#slate-list"><span class="btn-label">SEE THE SLATE</span><span class="btn-cap" aria-hidden="true">&#8599;</span></a>
@@ -204,43 +220,30 @@
     <div class="num-col"><p class="num-key">d&nbsp;&nbsp;]</p><p class="num display">25/35%</p><p class="num-label">BASE / UPLIFT REIMBURSEMENT</p></div>
   </section>
 
-  <!-- 5b · Partners marquee -->
-  <section class="partners" aria-label="Networks and studios RVK Studios has worked with">
+  <!-- 5b · Broadcast partners marquee -->
+  <section class="partners" aria-label="Networks that carry RVK Studios productions">
+    <p class="partners-lead">[&nbsp;Carried by&nbsp;]</p>
     <div class="scroll-line-wrapper">
       <div class="scroll-line" id="partnerLine">
         <div class="partner-set">
-          <img src="assets/partners/netflix.png" alt="Netflix" loading="lazy">
-          <img src="assets/partners/universal.png" alt="Universal Pictures" loading="lazy">
-          <img src="assets/partners/bbc.png" alt="BBC" loading="lazy">
-          <img src="assets/partners/hbo.png" alt="HBO" loading="lazy">
-          <img src="assets/partners/disney.png" alt="Disney" loading="lazy">
-          <img src="assets/partners/wb.png" alt="Warner Bros Pictures" loading="lazy">
-          <img src="assets/partners/apple.png" alt="Apple Original Films" loading="lazy">
-          <img src="assets/partners/paramount.png" alt="Paramount" loading="lazy">
-          <img src="assets/partners/paramountplus.png" alt="Paramount Plus Originals" loading="lazy">
-          <img src="assets/partners/nbc.png" alt="NBC" loading="lazy">
-          <img src="assets/partners/cbs.png" alt="CBS All Access" loading="lazy">
-          <img src="assets/partners/fox.png" alt="20th Century Fox" loading="lazy">
-          <img src="assets/partners/workingtitle.png" alt="Working Title" loading="lazy">
-          <img src="assets/partners/zdf.png" alt="ZDF" loading="lazy">
-          <img src="assets/partners/francetv.png" alt="France Televisions" loading="lazy">
+          <img src="assets/logos/netflix.svg" alt="Netflix" loading="lazy">
+          <img src="assets/logos/hbo.svg" alt="HBO" loading="lazy">
+          <img src="assets/logos/apple.svg" alt="Apple" loading="lazy">
+          <img src="assets/logos/paramountplus.svg" alt="Paramount+" loading="lazy">
+          <img src="assets/logos/nbc.svg" alt="NBC" loading="lazy">
+          <img src="assets/logos/cbs.svg" alt="CBS" loading="lazy">
+          <img src="assets/logos/fox.svg" alt="FOX" loading="lazy">
+          <img src="assets/logos/zdf.svg" alt="ZDF" loading="lazy">
         </div>
         <div class="partner-set" aria-hidden="true">
-          <img src="assets/partners/netflix.png" alt="" loading="lazy">
-          <img src="assets/partners/universal.png" alt="" loading="lazy">
-          <img src="assets/partners/bbc.png" alt="" loading="lazy">
-          <img src="assets/partners/hbo.png" alt="" loading="lazy">
-          <img src="assets/partners/disney.png" alt="" loading="lazy">
-          <img src="assets/partners/wb.png" alt="" loading="lazy">
-          <img src="assets/partners/apple.png" alt="" loading="lazy">
-          <img src="assets/partners/paramount.png" alt="" loading="lazy">
-          <img src="assets/partners/paramountplus.png" alt="" loading="lazy">
-          <img src="assets/partners/nbc.png" alt="" loading="lazy">
-          <img src="assets/partners/cbs.png" alt="" loading="lazy">
-          <img src="assets/partners/fox.png" alt="" loading="lazy">
-          <img src="assets/partners/workingtitle.png" alt="" loading="lazy">
-          <img src="assets/partners/zdf.png" alt="" loading="lazy">
-          <img src="assets/partners/francetv.png" alt="" loading="lazy">
+          <img src="assets/logos/netflix.svg" alt="" loading="lazy">
+          <img src="assets/logos/hbo.svg" alt="" loading="lazy">
+          <img src="assets/logos/apple.svg" alt="" loading="lazy">
+          <img src="assets/logos/paramountplus.svg" alt="" loading="lazy">
+          <img src="assets/logos/nbc.svg" alt="" loading="lazy">
+          <img src="assets/logos/cbs.svg" alt="" loading="lazy">
+          <img src="assets/logos/fox.svg" alt="" loading="lazy">
+          <img src="assets/logos/zdf.svg" alt="" loading="lazy">
         </div>
       </div>
     </div>
@@ -285,6 +288,8 @@
     <div class="film-sticky">
       <canvas class="film-canvas" id="filmCanvas" aria-label="Aerial film sequence over black sands, ending on the RVK Studios mark"></canvas>
       <div class="film-wash" aria-hidden="true"></div>
+      <div class="scope-bar sb-top" aria-hidden="true"></div>
+      <div class="scope-bar sb-bot" aria-hidden="true"></div>
       <p class="film-note fn-1">SHOT IN ICELAND.<br>FINISHED IN ICELAND.</p>
       <p class="film-note fn-2">BUILT BY A DIRECTOR.<br>RUN FOR DIRECTORS.</p>
       <div class="mynd-wrap">

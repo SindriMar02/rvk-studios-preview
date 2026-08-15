@@ -284,22 +284,33 @@
     <p class="slate-tail">Thirty productions and counting, from 101 Reykjavík in 2000 to today.</p>
   </section>
 
-  <!-- 7 · Film chapter: full-bleed canvas scrub + mynd → kvikmynd -->
-  <section class="film" id="film">
-    <div class="film-sticky">
-      <canvas class="film-canvas" id="filmCanvas" aria-label="Aerial film sequence over black sands, ending on the RVK Studios mark"></canvas>
-      <div class="film-wash" aria-hidden="true"></div>
+  <!-- 6b · A black beat before the reel -->
+  <section class="breath">
+    <p class="breath-cue">CUT&nbsp;TO:</p>
+  </section>
+
+  <!-- 7 · The reel: INT / EXT, cut by the scroll -->
+  <section class="reel" id="reel" aria-label="Interiors and exteriors, cut against each other">
+    <div class="reel-stage">
+      <div class="cut-layers" id="cutLayers">
+      <figure class="cut" data-slug="INT. STAGE 1 &middot; GUFUNES"><img src="assets/cut/cut-1.webp" alt="Empty sound stage at RVK Studios, Gufunes"></figure>
+      <figure class="cut" data-slug="EXT. ICE CAVE &middot; DAY"><img src="assets/cut/cut-2.webp" alt="Ice cave interior lit from the mouth"></figure>
+      <figure class="cut" data-slug="INT. STAGE &middot; SET BUILD"><img src="assets/cut/cut-3.webp" alt="Standing set under lighting rigs on a sound stage" loading="lazy"></figure>
+      <figure class="cut" data-slug="EXT. BLACK SAND &middot; DUSK"><img src="assets/cut/cut-4.webp" alt="Black sand beach with sea stacks at dusk" loading="lazy"></figure>
+      <figure class="cut" data-slug="INT. STAGE &middot; SHOOT DAY"><img src="assets/cut/cut-5.webp" alt="Crew shooting against a mountain backdrop on stage" loading="lazy"></figure>
+      <figure class="cut" data-slug="EXT. MOUNTAIN COAST &middot; SUNSET"><img src="assets/cut/cut-6.webp" alt="Coastal mountain range mirrored in still water" loading="lazy"></figure>
+      <figure class="cut" data-slug="INT. THE VILLAGE &middot; GUFUNES"><img src="assets/cut/cut-7.webp" alt="Atrium of the film village at Gufunes" loading="lazy"></figure>
+      <figure class="cut" data-slug="EXT. GLACIAL RIVER &middot; AERIAL"><img src="assets/cut/cut-8.webp" alt="Braided glacial river from the air" loading="lazy"></figure>
+      </div>
+      <div class="cut-seam" id="cutSeam" aria-hidden="true"><span class="seam-tag">CUT</span></div>
       <div class="scope-bar sb-top" aria-hidden="true"></div>
       <div class="scope-bar sb-bot" aria-hidden="true"></div>
-      <p class="film-note fn-1">SHOT IN ICELAND.<br>FINISHED IN ICELAND.</p>
-      <p class="film-note fn-2">BUILT BY A DIRECTOR.<br>RUN FOR DIRECTORS.</p>
-      <div class="mynd-wrap">
-        <p class="mynd" aria-label="kvikmynd" translate="no">
-          <span class="mynd-kvik" id="kvik">kvik</span><span class="mynd-part">m</span><span class="mynd-part">y</span><span class="mynd-part">n</span><span class="mynd-part">d</span><span class="mynd-dot">.</span>
-        </p>
-        <p class="mynd-gloss">kvik: living. mynd: image.<br>The Icelandic word for film is the living image.</p>
+      <p class="slug" id="slugNow">INT. STAGE 1 &middot; GUFUNES</p>
+      <p class="cut-count" id="cutCount">01 / 08</p>
+      <div class="reel-payoff" id="reelPayoff">
+        <h2 class="display">INT. AND EXT.<br>WITHOUT LEAVING THE COUNTRY.</h2>
+        <p class="payoff-sub">Three stages in Gufunes. Everything else is outside the door.</p>
       </div>
-      <p class="film-keep">keep rolling</p>
     </div>
   </section>
 

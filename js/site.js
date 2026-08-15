@@ -230,115 +230,75 @@
     plates.forEach(function (plate) { var p = plate.querySelector('.pp'); if (p) p.classList.add('is-active'); });
   }
 
-  /* ---------- film chapter: canvas scrub + mynd -> kvikmynd ---------- */
-  var canvas = document.getElementById('filmCanvas');
-  if (canvas) {
-    var ctx = canvas.getContext('2d');
-    var isMobile = window.innerWidth <= 640;
-    var TOTAL = isMobile ? 107 : 124;
-    var DIR = isMobile ? 'assets/seq2-m/' : 'assets/seq2/';
-    var frames = [];
-    var current = -1;
-    var loaded = false;
+  /* ---------- the reel: scroll cuts INT against EXT ----------
+     Each frame is revealed over the previous one by a wipe whose direction alternates,
+     so the seam sweeps back and forth like an edit being made under the reader. */
+  var layers = Array.prototype.slice.call(document.querySelectorAll('.cut'));
+  if (layers.length) {
+    var seam = document.getElementById('cutSeam');
+    var slugEl = document.getElementById('slugNow');
+    var countEl = document.getElementById('cutCount');
+    var N = layers.length;
+    var lastSlug = -1;
 
-    function frameURL(i) { return DIR + 'f-' + String(i + 1).padStart(3, '0') + '.webp'; }
+    function paint(p) {
+      /* the stage unpins at 5/6 of the section, so every beat lives inside that window */
+      var t = Math.min(1, p / 0.62);
+      var pos = t * (N - 1);
+      var i = Math.min(Math.floor(pos), N - 2);
+      var f = N > 1 ? pos - i : 0;
+      if (t >= 1) { i = N - 2; f = 1; }
 
-    function drawFrame(i) {
-      var img = frames[i];
-      if (!img || !img.complete || !img.naturalWidth) return;
-      var cw = canvas.width, chh = canvas.height;
-      var ir = img.naturalWidth / img.naturalHeight, cr = cw / chh;
-      var sx = 0, sy = 0, sw = img.naturalWidth, sh = img.naturalHeight;
-      if (cr > ir) { sh = img.naturalWidth / cr; sy = (img.naturalHeight - sh) / 2; }
-      else { sw = img.naturalHeight * cr; sx = (img.naturalWidth - sw) / 2; }
-      ctx.clearRect(0, 0, cw, chh);
-      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, chh);
-    }
-
-    function resizeCanvas() {
-      var dpr = Math.min(window.devicePixelRatio || 1, 1.8);
-      canvas.width = canvas.offsetWidth * dpr;
-      canvas.height = canvas.offsetHeight * dpr;
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = 'high';
-      if (current >= 0) drawFrame(current);
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    function loadFrames() {
-      if (loaded) return;
-      loaded = true;
-      for (var i = 0; i < TOTAL; i++) {
-        (function (i) {
-          var img = new Image();
-          img.src = frameURL(i);
-          img.onload = function () { if (i === 0 && current < 0) { current = 0; drawFrame(0); } };
-          frames[i] = img;
-        })(i);
-      }
-    }
-
-    if (hasGsap && !reduceMotion) {
-      ScrollTrigger.create({ trigger: '.film', start: 'top bottom+=250%', once: true, onEnter: loadFrames });
-      if ('requestIdleCallback' in window) requestIdleCallback(loadFrames, { timeout: 6000 });
-
-      ScrollTrigger.create({
-        trigger: '.film', start: 'top top', end: 'bottom bottom', scrub: true,
-        onUpdate: function (self) {
-          /* non-linear map: hold the aerial while the word works (0 - .62),
-             then run the descent onto the mark once the word has cleared */
-          var p = self.progress;
-          var LAND = 0.52;                      /* frame where the mark starts landing */
-          var f = p < 0.62
-            ? (p / 0.62) * LAND
-            : LAND + ((p - 0.62) / 0.38) * (1 - LAND);
-          var idx = Math.min(Math.floor(f * TOTAL), TOTAL - 1);
-          if (idx !== current) { current = idx; drawFrame(idx); }
+      layers.forEach(function (el, j) {
+        if (j < i) { el.style.opacity = '0'; el.style.clipPath = 'inset(0 0 0 0)'; return; }
+        el.style.opacity = '1';
+        if (j === i) {
+          el.style.clipPath = 'inset(0 0 0 0)';
+          el.style.transform = 'scale(' + (1 + 0.05 * f).toFixed(4) + ')';
+        } else if (j === i + 1) {
+          /* even cuts wipe in from the right, odd cuts from the left */
+          var pct = ((1 - f) * 100).toFixed(2);
+          el.style.clipPath = (i % 2 === 0)
+            ? 'inset(0 0 0 ' + pct + '%)'
+            : 'inset(0 ' + pct + '% 0 0)';
+          el.style.transform = 'scale(' + (1.06 - 0.06 * f).toFixed(4) + ')';
+        } else {
+          el.style.opacity = '0';
+          el.style.clipPath = (i % 2 === 0) ? 'inset(0 0 0 100%)' : 'inset(0 100% 0 0)';
         }
       });
 
-      /* kvik insertion mid-chapter */
-      var kvik = document.getElementById('kvik');
-      var myndEl = document.querySelector('.mynd');
-      var kvikW = 0;
-      function measureKvik() {
-        kvikW = kvik.getBoundingClientRect().width;
-        /* pre-shift keeps "mynd." optically centred before "kvik" arrives, but never
-           far enough to push the word off a narrow screen */
-        var room = Math.max(0, (window.innerWidth - myndEl.scrollWidth) / 2);
-        gsap.set(myndEl, { x: Math.min(kvikW / 2, room) });
+      /* the seam rides the wipe edge, and disappears between cuts */
+      var edge = (i % 2 === 0) ? (1 - f) : f;
+      seam.style.left = (edge * 100) + '%';
+      seam.style.opacity = (f > 0.02 && f < 0.98) ? '1' : '0';
+      seam.querySelector('.seam-tag').style.textAlign = (i % 2 === 0) ? 'left' : 'right';
+
+      /* the slugline belongs to whichever frame owns most of the screen */
+      var shown = f > 0.5 ? i + 1 : i;
+      if (shown !== lastSlug) {
+        lastSlug = shown;
+        slugEl.innerHTML = layers[shown].getAttribute('data-slug');
+        countEl.textContent = String(shown + 1).padStart(2, '0') + ' / ' + String(N).padStart(2, '0');
       }
-      if (document.fonts && document.fonts.ready) document.fonts.ready.then(measureKvik);
-      measureKvik();
-      window.addEventListener('resize', function () {
-        gsap.set(myndEl, { x: 0 }); measureKvik(); ScrollTrigger.refresh();
+    }
+
+    paint(0);
+
+    if (hasGsap && !reduceMotion) {
+      ScrollTrigger.create({
+        trigger: '.reel', start: 'top top', end: 'bottom bottom', scrub: true,
+        onUpdate: function (self) { paint(self.progress); }
       });
-      /* chapter choreography: canvas rides the whole scroll; word arrives, morphs, hands
-         back to the film so the drone landing on the RVK mark plays clean at the end */
-      gsap.set('.mynd-wrap', { opacity: 0, y: 40 });
-      gsap.timeline({
-        scrollTrigger: { trigger: '.film', start: 'top top', end: 'bottom bottom', scrub: true }
-      })
-        .to('.scope-bar', { scaleY: 0, duration: .1, ease: 'power2.out' }, 0)
-        .to('.fn-1', { opacity: 1, duration: .05 }, .06)
-        .to('.mynd-wrap', { opacity: 1, y: 0, duration: .08 }, .1)
-        .to('.fn-1', { opacity: 0, duration: .05 }, .26)
-        .to(kvik, { opacity: 1, duration: .18, ease: 'none' }, .3)
-        .to(myndEl, { x: 0, duration: .18, ease: 'none' }, .3)
-        .to('.mynd-gloss', { opacity: 1, duration: .07 }, .48)
-        .to('.fn-2', { opacity: 1, duration: .05 }, .56)
-        .to('.film-keep', { opacity: 1, duration: .05 }, .62)
-        .to('.fn-2', { opacity: 0, duration: .05 }, .72)
-        .to('.mynd-gloss', { opacity: 0, duration: .06 }, .76)
-        .to('.mynd-wrap', { opacity: 0, y: -40, duration: .08 }, .8)
-        .to('.film-keep', { opacity: 0, duration: .05 }, .86)
-        .to('.scope-bar', { scaleY: 1, duration: .08, ease: 'power2.inOut' }, .9);
+      gsap.timeline({ scrollTrigger: { trigger: '.reel', start: 'top top', end: 'bottom bottom', scrub: true } })
+        .to('.scope-bar', { scaleY: 0, duration: .06, ease: 'power2.out' }, 0)
+        .to('#reelPayoff', { opacity: 1, duration: .05 }, .66)
+        .to('.slug, .cut-count', { opacity: 0, duration: .04 }, .66)
+        .to('.scope-bar', { scaleY: 1, duration: .05, ease: 'power2.inOut' }, .78);
     } else {
-      /* static: last frame (the mark) */
-      var img = new Image();
-      img.src = frameURL(TOTAL - 1);
-      img.onload = function () { frames[TOTAL - 1] = img; current = TOTAL - 1; drawFrame(current); };
+      paint(1);
+      layers[N - 1].style.opacity = '1';
+      layers[N - 1].style.clipPath = 'inset(0 0 0 0)';
     }
   }
 

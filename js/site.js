@@ -323,7 +323,8 @@
       railTl.to(railBehind, { clipPath: 'inset(0% 100% 0% 0%)', ease: 'none', duration: 0.45 * sX }, tWipe);
       railTl.to(railOverlay, { '--rail-overlay': 0.4, ease: 'none', duration: 0.45 * sX }, tWipe);
       /* the title panel hands over to the closing statement */
-      railTl.to(railTitleWrap, { autoAlpha: 0, ease: 'none', duration: 0.08 * sX }, tX + 0.8 * sX);
+      var titleOut = small ? 0.06 : 0.80;   /* narrow screens: the card would cover it */
+      railTl.to(railTitleWrap, { autoAlpha: 0, ease: 'none', duration: 0.08 * sX }, tX + titleOut * sX);
     }
     gsap.set(railOverlay, { '--rail-overlay': 0 });
     buildRail();
@@ -364,7 +365,7 @@
 
   /* ---------- reveal failsafe: nothing may stay hidden ---------- */
   setTimeout(function () {
-    document.querySelectorAll('.hero-sub,.deck,.film-note,.mynd-gloss').forEach(function (el) {
+    document.querySelectorAll('.hero-sub,.deck,.slate-inner').forEach(function (el) {
       if (!el.style.opacity || parseFloat(getComputedStyle(el).opacity) === 0) {
         /* leave scrub-driven ones alone if motion is active; only force when no motion engine */
         if (!hasGsap) el.style.opacity = 1;

@@ -47,17 +47,14 @@ brand film does.
 7. **Filmography scrub**: center list of 6 titles (Apex, King and Conqueror, Touch,
    Beast, Against the Ice, Katla) scrub-activated; their REAL posters crossfade in two
    corner-bracket plates flanking the list. Tail line links the full 30-title slate.
-8. **The reel (signature chapter, replaces the retired word-morph).** THE CUT: eight
-   full-bleed frames alternate INT stage against EXT Iceland, each revealed by a wipe
-   whose direction flips every cut so the seam sweeps back and forth like an edit being
-   made under the reader. Real screenplay sluglines track it (INT. STAGE 1 · GUFUNES /
-   EXT. ICE CAVE · DAY ...), a mono counter reads 04 / 08, an ice seam line carries a
-   CUT tag, scope bars open at the start and close on the payoff:
-   "INT. AND EXT. WITHOUT LEAVING THE COUNTRY." A black beat with a "CUT TO:" cue sits
-   before it so the page breathes (the reference earns its chapter with emptiness).
-   Why this and not the reference's device: the etymology gag was inert to an
-   international buyer and its payoff was a logo the visitor already saw in the nav.
-   The cut IS the client's pitch: stages plus the country outside the door.
+8. **The rail (signature).** A black beat with a "CUT TO:" cue, then a pinned full-bleed
+   stage: the film gate (3-rect SVG curtain) opens on darkness, an establishing plate is
+   revealed, and the reader travels horizontally through eight INT/EXT cards, each with a
+   real slugline, a one-line fact and 0N/08. The title panel counter-translates so it sits
+   still while the strip moves. Mid-rail the plate behind wipes away to a third plate and
+   the overlay darkens to .4. It closes on a full-width statement: "Three stages in
+   Gufunes. EVERYTHING ELSE IS OUTSIDE THE DOOR." Mechanic transplanted from
+   `obyggdasetur/app.js`, not approximated.
 9. **CTA + footer**: "THE SCRIPT IS READY. NOW IT NEEDS ICELAND." + one-line verified
    incentive fact + single CTA "START A PRODUCTION" (mailto studios@rvkstudios.is,
    arrow-block cap). Footer: EXPLORE / CONNECT / SOCIAL columns, dotted rules,
@@ -67,9 +64,10 @@ brand film does.
 | Element | Effect | Spec |
 |---|---|---|
 | Slate timecode | 00:00:00:00 → 00:00:04:00 | 4s, CustomEase `spool` (multi-plateau, tape-spool feel), counts real frames at 24fps |
-| Slate wordmark | fade up | opacity 0→1, .8s power1.out at t=0.4 |
-| Slate location line | fade | opacity 0→1, .8s power1.out at t=0.9 |
-| Loader exit | curtain lift | clip-path inset(0 0 0 0) → inset(0 0 100% 0), .9s cubic-bezier(.32,.72,0,1); body scroll released; **hard setTimeout failsafe at 5500ms (1000ms under reduced motion)** |
+| Loader picture | their own logo sting | `M.1-rvk-studio-logo-24fps` cut to 4.3s, the mark forming out of fabric; muted, autoplay, poster fallback |
+| Film gate | two blades part | height 50.2%→0%, 1.1s expo.out; meta + progress rule fade in at t=0.45 |
+| Progress rule | fills with the counter | width 0→100% driven by the same 4s spool tween |
+| Loader exit | shutter, then open on the hero | blades close 50.2% in .26s power2.in → slate removed → blades open 0% in .85s expo.out; **hard setTimeout failsafe at 5600ms (900ms reduced motion)** |
 | Hero headline | per-char slide-in | chars (inside nowrap word wrappers): opacity 0→1, x 24%→0, scale 1.1→1, .35s, stagger .045, power1.out |
 | Hero sub + deck | fade up | opacity 0→1, .7s, stagger .12, power2.out, delay .55 |
 | Reduced motion | `html.no-motion` renders every entrance at its final state; loader exits at 1s |
@@ -85,7 +83,7 @@ brand film does.
 | Partner marquee | infinite ticker | x → -setWidth, 36s linear, repeat -1 (one marquee on the page) |
 | Focus pull (offer) | scrub active index | activeIdx = floor(progress × 4); inactive blur(6px)/opacity .68/steel → active sharp/white; ice [0N] index and the mix-blend-difference line fade .35s |
 | Filmography | scrub active + poster crossfade | same activeIdx over 6 titles; poster plates crossfade .38s inside corner brackets |
-| **The reel (signature)** | scroll cuts INT against EXT | `t = min(1, p/0.62)` keeps every beat inside the pinned window; `pos = t×(N-1)`; current frame holds `inset(0 0 0 0)` + scale 1→1.05; incoming frame wipes via clip-path inset from the **alternating** side + scale 1.06→1; seam line rides the wipe edge and hides outside f∈(.02,.98); slugline + counter switch at f>.5; scope bars scaleY 1→0 at open and →1 at .78; payoff opacity→1 at .66 |
+| **The rail (signature)** | pinned horizontal travel | pin length = 1.5·vh (title) + 1·vh (curtain) + 1.5·L where L = scrollWidth − vw. Title font grown→settled over 0.5·sText; 3 curtain rects → width 0 at 0.5/0.75/1.0·sCurtain from t=0.5·sText; travel starts at +0.3·sCurtain: container x→−L while the title wrap counter-translates x→+L; at +0.35·sX the behind plate clips `inset(0 100% 0 0)` and the overlay goes 0→.4 over 0.45·sX; title hands off (autoAlpha 0) at +0.8·sX desktop, +0.06·sX on narrow screens where a card would cover it. Rebuilt on debounced resize. |
 | Argument paragraph | word-by-word reveal | opacity .14→1, stagger .6, scrubbed top 78% → bottom 45% |
 | CTA arrow block | hover | cap translate(2px,-2px) + brightness 1.08, 260ms cubic-bezier(.32,.72,0,1); :active scale .98 |
 | Footer email | copy tooltip | "copied" fades in, auto-hides after 2.4s |

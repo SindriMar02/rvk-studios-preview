@@ -84,7 +84,7 @@ html.no-motion .slate-inner{opacity:1}
 .btn:active{transform:scale(.98)}
 
 /* ---------- hero ---------- */
-.hero{position:sticky;top:0;z-index:0;height:100svh;min-height:560px;overflow:hidden}
+.hero{position:sticky;top:0;z-index:0;height:100vh;height:100svh;min-height:560px;overflow:hidden}
 .hero-dim{position:absolute;inset:0;background:#05070A;opacity:0;pointer-events:none}
 html.no-motion .hero-dim{opacity:0}
 .hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
@@ -296,7 +296,7 @@ html.no-motion .arg-scrub .w{opacity:1}
 .rail_backdrop--clipped{z-index:2}
 .rail_final-bg_scrim{position:absolute;inset:0;background:rgba(5,6,7,.22)}
 .rail{position:relative;z-index:1}
-.rail_wrapper{position:sticky;top:0;width:100%;height:100svh;overflow:hidden;color:var(--ink)}
+.rail_wrapper{position:sticky;top:0;width:100%;height:100vh;height:100svh;overflow:hidden;color:var(--ink)}
 .rail_backdrops{position:absolute;inset:0;z-index:0}
 .rail_backdrop{position:absolute;inset:0;will-change:transform,clip-path;transform:translateZ(0)}
 .rail_backdrop--clipped{clip-path:url(#curtainClip);background:#050607}
@@ -304,10 +304,10 @@ html.no-motion .arg-scrub .w{opacity:1}
 .rail_overlay{position:absolute;inset:0;z-index:2;background:rgba(5,6,7,var(--rail-overlay,0));pointer-events:none}
 .rail_curtain{position:absolute;width:0;height:0}
 .rail_container{
-  position:relative;z-index:2;display:flex;height:100svh;width:fit-content;
+  position:relative;z-index:2;display:flex;height:100vh;height:100svh;width:fit-content;
   will-change:transform;transform:translateZ(0);
 }
-.rail_panel{flex:0 0 auto;height:100svh;position:relative;display:flex;align-items:center;justify-content:center}
+.rail_panel{flex:0 0 auto;height:100vh;height:100svh;position:relative;display:flex;align-items:center;justify-content:center}
 .rail_panel--title{width:100vw}
 .rail_panel:not(.rail_panel--title):not(.rail_panel--full){width:calc(46vw + 6rem);padding-right:6rem}
 .rail_panel--full{width:100vw;padding-right:0;overflow:hidden}
@@ -319,7 +319,7 @@ html.no-motion .arg-scrub .w{opacity:1}
 .rail_kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.22em;color:#c8ced2;text-transform:uppercase}
 
 /* each panel is a framed plate, cinema-card */
-.cut-card{position:relative;width:46vw;max-height:78svh;aspect-ratio:16/9;overflow:hidden;margin:0}
+.cut-card{position:relative;width:46vw;max-height:78vh;max-height:78svh;aspect-ratio:16/9;overflow:hidden;margin:0}
 .cut-card_image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .75s var(--ease)}
 .cut-card_shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,6,7,.5) 0%,rgba(5,6,7,.05) 42%,rgba(5,6,7,.72) 100%);transition:opacity .5s var(--ease)}
 .cut-card:hover .cut-card_image{transform:scale(1.03)}
@@ -374,14 +374,20 @@ html.no-motion .arg-scrub .w{opacity:1}
   .nav-links{display:none}
   .hero-copy{bottom:6.2rem}
   .hero-h1{font-size:clamp(2.6rem,13vw,4rem)}
+  .deck{gap:.7rem;padding:.8rem 1.2rem}
+  .deck-fps{display:none}
   .manifesto{grid-template-columns:1fr;gap:2rem}
   .mani-side{grid-column:1;justify-self:start;text-align:left}
   .mani-body{grid-row:auto;text-align:left;hyphens:none}
   .mani-bottom{justify-self:start;text-align:left}
+  /* work rows: single column, stage first, credits under it */
+  .work-head{margin-bottom:2.6rem}
+  .case{grid-template-columns:1fr;gap:1.4rem;padding:2.2rem 0}
   .case-rail{display:none}
-  .case-main,.case-main.is-flip,.case-main.has-rail{grid-template-columns:1fr;gap:1.6rem}
-  .case-main.is-flip .plate{order:0}
-  .plate-portrait{max-width:100%}
+  .plate{height:auto;aspect-ratio:16/10}
+  .one-sheet{width:5rem;left:1rem;bottom:1rem}
+  .case-index{margin-bottom:.6rem}
+  .case-text{justify-content:flex-start}
   .numbers{grid-template-columns:1fr 1fr;gap:2.5rem 0}
   .num-col{min-height:0;padding:0 1.2rem !important}
   .num-col:nth-child(2),.num-col:nth-child(4){padding-top:2.5rem !important}
@@ -389,9 +395,10 @@ html.no-motion .arg-scrub .w{opacity:1}
   .slate-grid{grid-template-columns:1fr}
   .poster-plate{display:none}
   .rail_title{font-size:2.6rem}
+  .rail_kicker{font-size:.64rem}
   .rail_panel:not(.rail_panel--title):not(.rail_panel--full){width:calc(86vw + 1.5rem);padding-right:1.5rem}
-  .cut-card{width:86vw;aspect-ratio:4/5;max-height:70svh}
-  .cut-card_num{top:-52svh;right:1.1rem}
+  .cut-card{width:86vw;aspect-ratio:4/5;max-height:70vh;max-height:70svh}
+  .cut-card_num{top:-52vh;top:-52svh;right:1.1rem}
   .cut-card_content{padding:1.1rem 1.2rem}
   .rail_statement_big{font-size:clamp(1.5rem,7vw,2.2rem)}
   .offer-sub{text-align:center;max-width:92vw}

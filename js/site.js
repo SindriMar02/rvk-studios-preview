@@ -329,8 +329,13 @@
     gsap.set(railOverlay, { '--rail-overlay': 0 });
     buildRail();
 
-    var railResize;
+    /* iOS fires resize when the toolbar collapses during scroll; rebuilding the
+       pin timeline mid-scroll makes the page jump. Only a WIDTH change is a real
+       relayout; height-only resizes are ignored. */
+    var railResize, lastRailW = window.innerWidth;
     window.addEventListener('resize', function () {
+      if (window.innerWidth === lastRailW) return;
+      lastRailW = window.innerWidth;
       clearTimeout(railResize);
       railResize = setTimeout(function () { buildRail(); ScrollTrigger.refresh(); }, 220);
     });
